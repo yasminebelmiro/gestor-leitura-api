@@ -33,12 +33,16 @@ public class Livro implements Serializable {
 
     //Não sei oq vai aki
     private List<Autor> autores;
+
     //Não sei oq vai aki
     private List<Genero> generos;
+
     //Não sei oq vai aki
     private Editora editora;
+
     //Não sei oq vai aki
     private List<Resenha> resenhas;
+
     //Não sei oq vai aki
     private Date dataPublicacao;
 

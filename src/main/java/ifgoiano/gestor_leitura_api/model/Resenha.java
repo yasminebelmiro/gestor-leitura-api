@@ -27,12 +27,10 @@ public class Resenha implements Serializable {
     @Column(nullable = false)
     private float avaliacao;
 
-    @ManyToOne
-    @JoinColumn(name = "leitor_id")
+    //Não sei oq vai aki
     private Leitor leitor;
 
-    @ManyToOne
-    @JoinColumn(name = "livro_id")
+    //Não sei oq vai aki
     private Livro livro;
 
     public Resenha(){
