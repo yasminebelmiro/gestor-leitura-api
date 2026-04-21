@@ -30,7 +30,8 @@ public class MetaAnual implements Serializable {
     @Column(nullable = false)
     private int quantidadeAlcancada;
 
-    //Não sei oq vai aki
+    @ManyToOne
+    @JoinColumn(name = "leitor_id")
     private Leitor leitor;
 
     public MetaAnual() {

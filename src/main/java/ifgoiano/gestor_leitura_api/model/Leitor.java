@@ -30,11 +30,11 @@ public class Leitor implements Serializable {
     @Column(nullable = false)
     private String email;
 
-    //Não sei oq vai aki
+    @OneToMany
     private List<Estante> estantes;
-    //Não sei oq vai aki
+    @OneToMany
     private List<MetaAnual> metasAnuais;
-    //Não sei oq vai aki
+    @OneToMany
     private List<Resenha> resenhas;
 
     public Leitor() {

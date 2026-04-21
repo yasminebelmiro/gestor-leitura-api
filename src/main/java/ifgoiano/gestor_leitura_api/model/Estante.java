@@ -26,7 +26,8 @@ public class Estante implements Serializable {
     @Column(nullable = false)
     private String nome;
 
-    //Não sei oq vai aki
+    @ManyToOne
+    @JoinColumn(name = "leitor_id")
     private Leitor leitor;
 
     public Estante() {

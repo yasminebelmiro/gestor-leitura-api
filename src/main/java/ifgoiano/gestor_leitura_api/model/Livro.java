@@ -31,19 +31,19 @@ public class Livro implements Serializable {
     private int numeroPaginas;
 
 
-    //Não sei oq vai aki
+    @OneToMany
     private List<Autor> autores;
 
-    //Não sei oq vai aki
+    @OneToMany
     private List<Genero> generos;
 
-    //Não sei oq vai aki
+    @OneToMany
     private Editora editora;
 
-    //Não sei oq vai aki
+    @OneToMany
     private List<Resenha> resenhas;
 
-    //Não sei oq vai aki
+    @Column(nullable = false)
     private Date dataPublicacao;
 
     public Livro (){

@@ -25,7 +25,8 @@ public class Editora implements Serializable {
     @Column(nullable = false)
     private String nome;
 
-    //Não sei oq vai aki
+    @OneToMany
+    @JoinColumn(name = "livro_id")
     private List<Livro> livros;
 
     public Editora() {

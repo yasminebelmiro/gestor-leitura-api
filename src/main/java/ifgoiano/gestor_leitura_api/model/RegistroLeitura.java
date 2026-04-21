@@ -22,7 +22,8 @@ public class RegistroLeitura implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    //Não sei oq vai aki
+    @ManyToMany
+    @JoinColumn(name = "item_estante_id")
     private ItemEstante itemEstante;
 
     @Column(nullable = false)
