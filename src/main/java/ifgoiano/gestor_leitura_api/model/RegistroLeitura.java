@@ -22,10 +22,6 @@ public class RegistroLeitura implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToMany
-    @JoinColumn(name = "item_estante_id")
-    private ItemEstante itemEstante;
-
     @Column(nullable = false)
     private Date data;
 
@@ -35,13 +31,17 @@ public class RegistroLeitura implements Serializable {
     @Column(length = 1000)
     private String comentarios;
 
+    @ManyToOne
+    @JoinColumn(name = "item_id")
+    private ItemEstante item;
+
     public RegistroLeitura() {
 
     }
 
-    public RegistroLeitura(Long id, ItemEstante itemEstante, Date data, int paginaAtual, String comentarios) {
+    public RegistroLeitura(Long id, ItemEstante item, Date data, int paginaAtual, String comentarios) {
         this.id = id;
-        this.itemEstante = itemEstante;
+        this.item = item;
         this.data = data;
         this.paginaAtual = paginaAtual;
         this.comentarios = comentarios;
