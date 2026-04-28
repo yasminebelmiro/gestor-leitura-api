@@ -25,28 +25,31 @@ public class Leitor implements Serializable {
     private Long id;
 
     @Column(nullable = false)
-    private String nome;
+    private String nickName;
 
     @Column(nullable = false)
     private String email;
 
+    @Column(nullable = false)
+    private String senha;
+
     @OneToMany
+    @JoinColumn(name = "estantes_id")
     private List<Estante> estantes;
+
     @OneToMany
-    private List<MetaAnual> metasAnuais;
-    @OneToMany
-    private List<Resenha> resenhas;
+    @JoinColumn(name = "metas_id")
+    private List<MetaAnual> metas;
 
     public Leitor() {
 
     }
 
-    public Leitor(List<Estante> estantes, List<Resenha> resenhas, Long id, String nome, String email, List<MetaAnual> metasAnuais) {
+    public Leitor(List<Estante> estantes, Long id, String nickName, String email, List<MetaAnual> metas) {
         this.estantes = estantes;
-        this.resenhas = resenhas;
         this.id = id;
-        this.nome = nome;
+        this.nickName = nickName;
         this.email = email;
-        this.metasAnuais = metasAnuais;
+        this.metas = metas;
     }
 }
