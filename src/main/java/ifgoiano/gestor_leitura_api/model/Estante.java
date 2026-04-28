@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.List;
 
 @Getter
 @Setter
@@ -29,6 +30,10 @@ public class Estante implements Serializable {
     @ManyToOne
     @JoinColumn(name = "leitor_id")
     private Leitor leitor;
+
+    @OneToMany
+    @JoinColumn(name = "itens_id")
+    private List<ItemEstante> itens;
 
     public Estante() {
     }
