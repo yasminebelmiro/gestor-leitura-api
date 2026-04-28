@@ -26,17 +26,17 @@ public class Editora implements Serializable {
     private String nome;
 
     @OneToMany
-    @JoinColumn(name = "livro_id")
-    private List<Livro> livros;
+    @JoinColumn(name = "obras_id")
+    private List<Livro> obras;
 
     public Editora() {
 
     }
 
-    public Editora(Long id, String nome, List<Livro> livros) {
+    public Editora(Long id, String nome, List<Livro> obras) {
         this.id = id;
         this.nome = nome;
-        this.livros = livros;
+        this.obras = obras;
     }
 
 }
