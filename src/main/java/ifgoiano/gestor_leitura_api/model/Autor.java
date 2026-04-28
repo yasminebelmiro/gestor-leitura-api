@@ -25,17 +25,17 @@ public class Autor implements Serializable {
     @Column(nullable = false)
     private String nome;
 
-    @OneToMany
-    @JoinColumn(name = "livro_id")
-    private List<Livro> livros;
+    @ManyToMany
+    @JoinColumn(name = "obras_id")
+    private List<Livro> obras;
 
     public Autor() {
 
     }
 
-    public Autor(Long id, String nome, List<Livro> livros) {
+    public Autor(Long id, String nome, List<Livro> obras) {
         this.id = id;
         this.nome = nome;
-        this.livros = livros;
+        this.obras = obras;
     }
 }
