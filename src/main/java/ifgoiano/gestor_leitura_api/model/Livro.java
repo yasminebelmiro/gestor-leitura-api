@@ -24,41 +24,44 @@ public class Livro implements Serializable {
     private Long id;
 
     @Column(nullable = false)
-    private String isbn;
+    private String googleVolumeId;
     @Column(nullable = false)
-    private String titulo;
+    private String isbn;
     @Column(nullable = false)
     private int numeroPaginas;
 
 
-    @OneToMany
+    @ManyToMany
+    @JoinColumn(name = "autores_id")
     private List<Autor> autores;
 
-    @OneToMany
+    @ManyToMany
+    @JoinColumn(name = "generos_id")
     private List<Genero> generos;
 
     @OneToMany
-    private Editora editora;
+    @JoinColumn(name = "avaliacao_id")
+    private List<Resenha> avaliacao;
 
-    @OneToMany
-    private List<Resenha> resenhas;
+    @ManyToOne
+    @JoinColumn(name = "editora_id")
+    private Editora editora;
 
     @Column(nullable = false)
     private Date dataPublicacao;
 
-    public Livro (){
+    public Livro() {
 
     }
 
-    public Livro(Long id, String isbn, String titulo, int numeroPaginas, List<Autor> autores, List<Genero> generos, Editora editora, List<Resenha> resenhas, Date dataPublicacao) {
+    public Livro(Long id, String isbn, int numeroPaginas, List<Autor> autores, List<Genero> generos, Editora editora, List<Resenha> avaliacao, Date dataPublicacao) {
         this.id = id;
         this.isbn = isbn;
-        this.titulo = titulo;
         this.numeroPaginas = numeroPaginas;
         this.autores = autores;
         this.generos = generos;
         this.editora = editora;
-        this.resenhas = resenhas;
+        this.avaliacao = avaliacao;
         this.dataPublicacao = dataPublicacao;
     }
 }
