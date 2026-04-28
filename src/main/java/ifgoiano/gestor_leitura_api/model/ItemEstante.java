@@ -22,29 +22,30 @@ public class ItemEstante implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToMany
+    @Column
+    private Enum<StatusLeitura> status;
+
+    @ManyToOne
     @JoinColumn(name = "estante_id")
     private Estante estante;
 
-    @OneToMany
+    @ManyToOne
     @JoinColumn(name = "livro_id")
     private Livro livro;
 
-    @Column
-    private String status;
-
     @OneToMany
-    private List<RegistroLeitura> registrosLeitura;
+    @JoinColumn(name = "registros_id")
+    private List<RegistroLeitura> registros;
 
     public ItemEstante() {
 
     }
 
-    public ItemEstante(Long id, Estante estante, Livro livro, String status, List<RegistroLeitura> registrosLeitura) {
+    public ItemEstante(Long id, Estante estante, Livro livro, Enum<StatusLeitura> status, List<RegistroLeitura> registros) {
         this.id = id;
         this.estante = estante;
         this.livro = livro;
         this.status = status;
-        this.registrosLeitura = registrosLeitura;
+        this.registros = registros;
     }
 }
