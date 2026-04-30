@@ -10,12 +10,12 @@ import java.util.Optional;
 @Repository
 public interface EditoraRepository extends JpaRepository<Editora, Long> {
 
-    // Busca editora pelo nome exato, ignorando letras maiúsculas/minúsculas.
-    Optional<Editora> findByNomeIgnoreCase(String nome);
+    // // Busca editora pelo nome exato, ignorando letras maiúsculas/minúsculas.
+    // Optional<Editora> findByNomeIgnoreCase(String nome);
 
-    // Busca editoras que contenham parte do nome informado.
-    List<Editora> findByNomeContainingIgnoreCase(String nome);
+    // // Busca editoras que contenham parte do nome informado.
+    // List<Editora> findByNomeContainingIgnoreCase(String nome);
 
-    // Verifica se já existe editora com esse nome.
-    boolean existsByNomeIgnoreCase(String nome);
+    // // Verifica se já existe editora com esse nome.
+    // boolean existsByNomeIgnoreCase(String nome);
 }

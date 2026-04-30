@@ -10,12 +10,12 @@ import java.util.Optional;
 @Repository
 public interface AutorRepository extends JpaRepository<Autor, Long> {
 
-    // Busca autores pelo nome exato, ignorando letras maiúsculas/minúsculas.
-    Optional<Autor> findByNomeIgnoreCase(String nome);
+    // // Busca autores pelo nome exato, ignorando letras maiúsculas/minúsculas.
+    // Optional<Autor> findByNomeIgnoreCase(String nome);
 
-    // Busca autores que contenham parte do nome informado.
-    List<Autor> findByNomeContainingIgnoreCase(String nome);
+    // // Busca autores que contenham parte do nome informado.
+    // List<Autor> findByNomeContainingIgnoreCase(String nome);
 
-    // Verifica se já existe autor com esse nome.
-    boolean existsByNomeIgnoreCase(String nome);
+    // // Verifica se já existe autor com esse nome.
+    // boolean existsByNomeIgnoreCase(String nome);
 }
