@@ -21,10 +21,20 @@ public interface EstanteRepository extends JpaRepository<Estante, Long> {
     // // Busca estantes de um leitor pelo nome.
     // List<Estante> findByLeitorIdAndNomeContainingIgnoreCase(Long leitorId, String nome);
 
+    // Busca estante pelo nome da estante
+    //List<Estante> findByNomeContainingIgnoreCase(String nome);
+
     // // Verifica se o leitor já possui uma estante com esse nome.
     // boolean existsByNomeIgnoreCaseAndLeitorId(String nome, Long leitorId);
 
+    //tras a soma das estantes de um leitor
+    //long countByLeitorId(Long leitorId);
+
     // // Calcula o total de páginas dos livros contidos em uma estante.
-    // @Query("SELECT COALESCE(SUM(i.livro.numeroPaginas), 0) FROM ItemEstante i WHERE i.estante.id = :estanteId")
-    // Integer calcularTotalPaginasDaEstante(@Param("estanteId") Long estanteId);
+    // @Query("""
+    //           SELECT COALESCE(SUM(i.livro.numeroPaginas), 0)
+    //           FROM ItemEstante i
+    //           WHERE i.estante.id = :estanteId
+    //           """)
+    //    Long calcularTotalPaginasDaEstante(@Param("estanteId") Long estanteId);
 }
