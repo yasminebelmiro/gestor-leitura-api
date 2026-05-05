@@ -35,8 +35,13 @@ public class Livro implements Serializable {
 
     @Column(nullable = false)
     private String googleVolumeId;
+    
+    @Column(nullable = false)
+    private String titulo;
+
     @Column(nullable = false)
     private String isbn;
+
     @Column(nullable = false)
     private int numeroPaginas;
 
@@ -74,16 +79,20 @@ public class Livro implements Serializable {
 
     }
 
-    public Livro(Long id, String isbn, int numeroPaginas, List<Autor> autores, List<Genero> generos, Editora editora,
-            List<Resenha> avaliacao, Date dataPublicacao, String capa_ur) {
+    public Livro(Long id, String googleVolumeId, String titulo, String isbn, int numeroPaginas, List<Autor> autores,
+            List<Genero> generos, List<Resenha> avaliacao, Editora editora, Date dataPublicacao, String capa_url) {
         this.id = id;
+        this.googleVolumeId = googleVolumeId;
+        this.titulo = titulo;
         this.isbn = isbn;
         this.numeroPaginas = numeroPaginas;
         this.autores = autores;
         this.generos = generos;
-        this.editora = editora;
         this.avaliacao = avaliacao;
+        this.editora = editora;
         this.dataPublicacao = dataPublicacao;
-        this.capa_url = capa_ur;
+        this.capa_url = capa_url;
     }
+
+ 
 }
