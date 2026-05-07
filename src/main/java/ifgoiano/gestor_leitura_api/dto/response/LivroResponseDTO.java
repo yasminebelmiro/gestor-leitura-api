@@ -1,9 +1,9 @@
-package ifgoiano.gestor_leitura_api.dto;
+package ifgoiano.gestor_leitura_api.dto.response;
 
 import java.util.Date;
 import java.util.List;
 
-public record LivroDTO(
+public record LivroResponseDTO(
         String googleId,
         String titulo,
         List<String> autores,

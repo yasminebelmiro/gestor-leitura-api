@@ -9,8 +9,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import ifgoiano.gestor_leitura_api.dto.GoogleBooksResponse;
-import ifgoiano.gestor_leitura_api.dto.LivroDTO;
+import ifgoiano.gestor_leitura_api.dto.response.GoogleBooksResponse;
+import ifgoiano.gestor_leitura_api.dto.response.LivroResponseDTO;
 
 @Service
 public class GoogleBooksIntegrationService {
@@ -27,7 +27,7 @@ public class GoogleBooksIntegrationService {
         this.restTemplate = restTemplate;
     }
 
-    public List<LivroDTO> buscarLivros(String termoBusca) {
+    public List<LivroResponseDTO> buscarLivros(String termoBusca) {
         String url = UriComponentsBuilder.fromUriString(apiUrl)
                 .queryParam("q", termoBusca)
                 .queryParam("langRestrict", "pt-BR")
@@ -45,7 +45,7 @@ public class GoogleBooksIntegrationService {
                         ? item.volumeInfo().imageLinks().thumbnail()
                         : "url_para_imagem_sem_capa";
 
-                return new LivroDTO(
+                return new LivroResponseDTO(
                         item.id(),
                         item.volumeInfo().title(),
                         item.volumeInfo().authors() != null ? item.volumeInfo().authors()

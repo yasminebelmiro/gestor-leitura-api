@@ -1,4 +1,4 @@
-package ifgoiano.gestor_leitura_api.dto;
+package ifgoiano.gestor_leitura_api.dto.request;
 
 import java.util.Date;
 import java.util.List;
