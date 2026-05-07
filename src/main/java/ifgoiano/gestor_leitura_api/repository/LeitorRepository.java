@@ -11,14 +11,21 @@ import java.util.Optional;
 public interface LeitorRepository extends JpaRepository<Leitor, Long> {
 
     // // Busca leitor pelo e-mail. Útil para login, validação e evitar cadastro duplicado.
-    // Optional<Leitor> findByEmail(String email);
+    // Optional<Leitor> findByEmailIgnoreCase(String email);
 
     // // Busca leitor pelo nome exato, ignorando letras maiúsculas/minúsculas.
-    // Optional<Leitor> findByNomeIgnoreCase(String nome);
+    // Optional<Leitor> findByNickNameIgnoreCase(String nickName);
 
     // // Busca leitores que contenham parte do nome informado.
-    // List<Leitor> findByNomeContainingIgnoreCase(String nome);
+    // List<Leitor> findByNickNameContainingIgnoreCase(String nickName);
 
     // // Verifica se já existe leitor com esse e-mail.
-    // boolean existsByEmail(String email);
+    // boolean existsByEmailIgnoreCase(String email);
+
+    //Verifica a existencia de um nickname.
+    //boolean existsByNickNameIgnoreCase(String nickName);
+
+    //Busca por email e senha
+    //Optional<Leitor> findByEmailIgnoreCaseAndSenha(String email, String senha);
+
 }
