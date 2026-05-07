@@ -40,9 +40,9 @@ public interface ItemEstanteRepository extends JpaRepository<ItemEstante, Long> 
     // Conta os livros por id
     long countByLivroId(Long livroId);
 
-    // Lista todos os itens de um leitor filtrando pelo status.
-    @Query("SELECT i FROM ItemEstante i WHERE i.estante.leitor.id = :leitorId AND LOWER(i.status) = LOWER(:status)")
-    List<ItemEstante> findByLeitorIdAndStatus(@Param("leitorId") Long leitorId, @Param("status") String status);
+//     // Lista todos os itens de um leitor filtrando pelo status.
+    @Query("SELECT i FROM ItemEstante i WHERE i.estante.leitor.id = :leitorId AND i.status = :status")
+    List<ItemEstante> findByLeitorIdAndStatus(@Param("leitorId") Long leitorId, @Param("status") Enum<StatusLeitura> status);
 
     // Conta quantos livros de um leitor estão com o status informado.
     @Query("""
