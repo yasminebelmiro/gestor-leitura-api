@@ -1,6 +1,5 @@
 package ifgoiano.gestor_leitura_api.mapper;
 
-import java.util.Optional;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
