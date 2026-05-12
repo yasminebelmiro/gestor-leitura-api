@@ -9,8 +9,8 @@ public record LivroResponseDTO(
         List<String> autores,
         String descricao,
         String editora,
-        Date dataPublicacao,
-        int numeroPaginas,
+        String dataPublicacao,
+        Integer numeroPaginas,
         List<String> generos,
         String capaUrl) {
 
