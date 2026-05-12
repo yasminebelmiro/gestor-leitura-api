@@ -5,10 +5,14 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Value;
+
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
-
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
+import ifgoiano.gestor_leitura_api.dto.request.GoogleBookItem;
 import ifgoiano.gestor_leitura_api.dto.response.GoogleBooksResponse;
 import ifgoiano.gestor_leitura_api.dto.response.LivroResponseDTO;
 
@@ -27,12 +31,16 @@ public class GoogleBooksIntegrationService {
         this.restTemplate = restTemplate;
     }
 
+    @Retryable(
+      value = { RuntimeException.class, RestClientException.class }, 
+      maxAttempts = 3, 
+      backoff = @Backoff(delay = 2000) // Espera 2 segundos antes de tentar de novo
+    )
     public List<LivroResponseDTO> buscarLivros(String termoBusca) {
         String url = UriComponentsBuilder.fromUriString(apiUrl)
                 .queryParam("q", termoBusca)
-                .queryParam("langRestrict", "pt-BR")
+                .queryParam("langRestrict", "pt")
                 .queryParam("hl", "pt-BR")
-                .queryParam("key", apiKey)
                 .toUriString();
         try {
             GoogleBooksResponse response = restTemplate.getForObject(url, GoogleBooksResponse.class);
@@ -51,17 +59,29 @@ public class GoogleBooksIntegrationService {
                         item.volumeInfo().authors() != null ? item.volumeInfo().authors()
                                 : Collections.singletonList("Autor Desconhecido"),
                         item.volumeInfo().description(),
-                        item.volumeInfo().publisher() != null ?  item.volumeInfo().publisher() : "Editora Desconhecida",
+                        item.volumeInfo().publisher() != null ? item.volumeInfo().publisher() : "Editora Desconhecida",
                         item.volumeInfo().publishedDate(),
                         item.volumeInfo().pageCount(),
                         item.volumeInfo().categories(),
-                        capa
-                );
+                        capa);
             }).collect(Collectors.toList());
 
         } catch (Exception e) {
             throw new RuntimeException("Falha ao comunicar com a API do Google Books", e);
 
+        }
+    }
+
+    public GoogleBookItem buscarDetalhesCompletos(String googleId) {
+        String url = UriComponentsBuilder.fromUriString(apiUrl)
+                .pathSegment(googleId)
+                .queryParam("key", apiKey)
+                .toUriString();
+
+        try {
+            return restTemplate.getForObject(url, GoogleBookItem.class);
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao buscar detalhes do livro no Google: " + googleId, e);
         }
     }
 }

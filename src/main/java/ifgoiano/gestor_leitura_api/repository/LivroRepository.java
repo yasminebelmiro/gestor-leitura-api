@@ -44,6 +44,7 @@ public interface LivroRepository extends JpaRepository<Livro, Long> {
    // Busca livro pelo id do GoogleVolume.
    Optional<Livro> findByGoogleVolumeId(String googleVolumeId);
 
+   Optional<Livro> deleteByGoogleVolumeId(String googleVolumeId);
    // Verifica a existencia do GoogleVolumeId.
    boolean existsByGoogleVolumeId(String googleVolumeId);
 
