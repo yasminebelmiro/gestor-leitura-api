@@ -30,6 +30,10 @@ public class Autor implements Serializable {
         this.obras = obras;
     }
 
+    public Autor() {
+
+    }
+
     public Long getId() {
         return id;
     }
