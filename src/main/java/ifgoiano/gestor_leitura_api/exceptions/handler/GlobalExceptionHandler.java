@@ -1,0 +1,38 @@
+package ifgoiano.gestor_leitura_api.exceptions.handler;
+
+import java.util.Date;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+
+import ifgoiano.gestor_leitura_api.exceptions.EstanteNotFoundException;
+import ifgoiano.gestor_leitura_api.exceptions.ExceptionResponse;
+import ifgoiano.gestor_leitura_api.exceptions.ItemEstanteNotFoundException;
+import ifgoiano.gestor_leitura_api.exceptions.LeitorNotFoundException;
+
+public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
+
+    @ExceptionHandler(LeitorNotFoundException.class)
+    public final ResponseEntity<ExceptionResponse> handleLeitorException(Exception ex, WebRequest request) {
+        ExceptionResponse exceptionResponse = new ExceptionResponse(new Date(), ex.getMessage(),
+                request.getDescription(false));
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(EstanteNotFoundException.class)
+    public final ResponseEntity<ExceptionResponse> handleEstanteException(Exception ex, WebRequest request) {
+        ExceptionResponse exceptionResponse = new ExceptionResponse(new Date(), ex.getMessage(),
+                request.getDescription(false));
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(ItemEstanteNotFoundException.class)
+    public final ResponseEntity<ExceptionResponse> handleItemEstanteException(Exception ex, WebRequest request) {
+        ExceptionResponse exceptionResponse = new ExceptionResponse(new Date(), ex.getMessage(),
+                request.getDescription(false));
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.NOT_FOUND);
+    }
+}

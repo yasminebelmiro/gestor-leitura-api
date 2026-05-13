@@ -6,13 +6,14 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import ifgoiano.gestor_leitura_api.exceptions.LeitorNotFoundException;
 import ifgoiano.gestor_leitura_api.model.Leitor;
 
 @Repository
 public interface LeitorRepository extends JpaRepository<Leitor, Long> {
 
     default Leitor findByIdOrThrow(Long id) {
-        return findById(id).orElseThrow();
+        return findById(id).orElseThrow(() -> new LeitorNotFoundException(id));
     }
     // Busca leitor pelo e-mail. Útil para login, validação e evitar cadastro duplicado.z
     Leitor findByEmailIgnoreCase(String email);
