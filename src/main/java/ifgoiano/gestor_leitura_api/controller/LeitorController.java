@@ -26,6 +26,11 @@ public class LeitorController {
         this.leitorService = leitorService;
     }
 
+    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<LeitorResponseDTO> findById(@PathVariable Long id){
+        return ResponseEntity.ok(leitorService.findById(id));
+    }
+
     @GetMapping(value = "/{email}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(
             summary = "Buscar leitor por email",
