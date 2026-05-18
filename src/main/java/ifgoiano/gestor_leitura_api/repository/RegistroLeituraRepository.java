@@ -1,6 +1,9 @@
 package ifgoiano.gestor_leitura_api.repository;
 
+import ifgoiano.gestor_leitura_api.exceptions.LeitorNotFoundException;
+import ifgoiano.gestor_leitura_api.model.Leitor;
 import ifgoiano.gestor_leitura_api.model.RegistroLeitura;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -10,9 +13,14 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import ifgoiano.gestor_leitura_api.exceptions.RegistroLeitutraNotfoundException;
+
 @Repository
 public interface RegistroLeituraRepository extends JpaRepository<RegistroLeitura, Long> {
 
+      default RegistroLeitura findByIdOrThrow(Long id) {
+        return findById(id).orElseThrow(() -> new RegistroLeitutraNotfoundException(id));
+    }
      // Lista todos os registros de leitura de um item de estante.
      List<RegistroLeitura> findByItemId(Long itemId);
 
