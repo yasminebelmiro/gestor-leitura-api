@@ -3,12 +3,15 @@ package ifgoiano.gestor_leitura_api.service;
 import java.util.List;
 import java.util.logging.Logger;
 
+import org.springframework.stereotype.Service;
+
 import ifgoiano.gestor_leitura_api.dto.request.ResenhaRequestDTO;
 import ifgoiano.gestor_leitura_api.dto.response.ResenhaResponseDTO;
 import ifgoiano.gestor_leitura_api.mapper.ResenhaMapper;
 import ifgoiano.gestor_leitura_api.model.Resenha;
 import ifgoiano.gestor_leitura_api.repository.ResenhaRepository;
 
+@Service
 public class ResenhaService {
     private static final Logger logger = Logger.getLogger(ResenhaService.class.getName());
     private final ResenhaRepository repository;
