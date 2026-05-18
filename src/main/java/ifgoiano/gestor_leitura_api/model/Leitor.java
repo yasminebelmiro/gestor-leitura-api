@@ -4,6 +4,7 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -33,12 +34,10 @@ public class Leitor implements Serializable {
     @Column(nullable = false)
     private String senha;
 
-    @OneToMany
-    @JoinColumn(name = "estantes_id")
+    @OneToMany(mappedBy = "leitor", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Estante> estantes;
 
-    @OneToMany
-    @JoinColumn(name = "metas_id")
+    @OneToMany(mappedBy = "leitor", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MetaAnual> metas;
 
     public Leitor() {
@@ -159,5 +158,5 @@ public class Leitor implements Serializable {
             return false;
         return true;
     }
-    
+
 }

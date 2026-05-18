@@ -25,8 +25,7 @@ public class Estante implements Serializable {
     @JoinColumn(name = "leitor_id")
     private Leitor leitor;
 
-    @OneToMany
-    @JoinColumn(name = "itens_id")
+    @OneToMany(mappedBy="estante", cascade=CascadeType.ALL, orphanRemoval=true)
     private List<ItemEstante> itens;
 
     public Estante() {
