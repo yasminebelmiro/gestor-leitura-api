@@ -15,6 +15,7 @@ import ifgoiano.gestor_leitura_api.repository.LivroRepository;
 
 @Service
 public class EstanteService {
+
     private static final Logger logger = Logger.getLogger(EstanteService.class.getName());
     private final EstanteRepository estanteRepository;
     private final LivroRepository livroRepository;
@@ -29,8 +30,8 @@ public class EstanteService {
     public EstanteResponseDTO findByIdAndLeitorId(Long id, Long leitorId) {
         logger.info(() -> "Buscando estante " + id);
         Estante estante = estanteRepository.findByIdAndLeitorId(id, leitorId);
-         if(estante == null){
-           throw new EstanteNotFoundException(id);
+        if (estante == null) {
+            throw new EstanteNotFoundException(id);
         }
         return mapper.toResponse(estante);
     }
@@ -48,14 +49,14 @@ public class EstanteService {
         return mapper.toResponse(salva);
     }
 
-    public EstanteResponseDTO update(EstanteResquestDTO dto) {
+    public EstanteResponseDTO update(Long id, EstanteResquestDTO dto) {
         logger.info(() -> "Criando estante " + dto.name());
-        Estante existing = estanteRepository.findByIdAndLeitorId(dto.id(), dto.leitorId());
-        if(existing == null){
-           throw new EstanteNotFoundException(dto.id());
+        Estante existing = estanteRepository.findByIdAndLeitorId(id, dto.leitorId());
+        if (existing == null) {
+            throw new EstanteNotFoundException(id);
         }
         Estante atualizar = mapper.toEntity(dto);
-        atualizar.setId(dto.id());
+        atualizar.setId(id);
         Estante atualizada = estanteRepository.save(atualizar);
         return mapper.toResponse(atualizada);
     }

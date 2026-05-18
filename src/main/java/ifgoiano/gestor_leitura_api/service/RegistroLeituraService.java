@@ -46,8 +46,9 @@ public class RegistroLeituraService {
 
     public RegistroLeituraResponseDTO update(long id, RegistroLeituraRequestDTO dto) {
         logger.info(() -> "Atualizando registro " + id);
-        RegistroLeitura existing = repository.findByIdOrThrow(id);
+        repository.findByIdOrThrow(id);
         RegistroLeitura atualizar = mapper.toEntity(dto);
+        atualizar.setId(id);
         RegistroLeitura atualizado = repository.save(atualizar);
         return mapper.toResponse(atualizado);
 

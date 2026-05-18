@@ -15,6 +15,7 @@ import ifgoiano.gestor_leitura_api.exceptions.ExceptionResponse;
 import ifgoiano.gestor_leitura_api.exceptions.ItemEstanteNotFoundException;
 import ifgoiano.gestor_leitura_api.exceptions.LeitorNotFoundException;
 import ifgoiano.gestor_leitura_api.exceptions.RegistroLeitutraNotfoundException;
+import ifgoiano.gestor_leitura_api.exceptions.ResenhaNotFoundException;
 
 @ControllerAdvice
 @RestController
@@ -41,8 +42,15 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(exceptionResponse, HttpStatus.NOT_FOUND);
     }
 
-     @ExceptionHandler(RegistroLeitutraNotfoundException.class)
+    @ExceptionHandler(RegistroLeitutraNotfoundException.class)
     public final ResponseEntity<ExceptionResponse> handleRegistroException(Exception ex, WebRequest request) {
+        ExceptionResponse exceptionResponse = new ExceptionResponse(new Date(), ex.getMessage(),
+                request.getDescription(false));
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(ResenhaNotFoundException.class)
+    public final ResponseEntity<ExceptionResponse> handleResenhaException(Exception ex, WebRequest request) {
         ExceptionResponse exceptionResponse = new ExceptionResponse(new Date(), ex.getMessage(),
                 request.getDescription(false));
         return new ResponseEntity<>(exceptionResponse, HttpStatus.NOT_FOUND);
