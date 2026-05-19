@@ -19,8 +19,7 @@ public class Editora implements Serializable {
     @Column(nullable = false)
     private String nome;
 
-    @OneToMany
-    @JoinColumn(name = "obras_id")
+    @OneToMany(mappedBy="editora")
     private List<Livro> obras;
 
     public Editora(Long id, String nome, List<Livro> obras) {

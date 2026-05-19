@@ -8,11 +8,15 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import ifgoiano.gestor_leitura_api.exceptions.MetaAnualNotFoundException;
 import ifgoiano.gestor_leitura_api.model.MetaAnual;
 
 @Repository
 public interface MetaAnualRepository extends JpaRepository<MetaAnual, Long> {
 
+   default MetaAnual findByIdOrThrow(Long id) {
+        return findById(id).orElseThrow(() -> new MetaAnualNotFoundException(id));
+    }
     // Lista todas as metas de um leitor.
     List<MetaAnual> findByLeitorId(Long leitorId);
 

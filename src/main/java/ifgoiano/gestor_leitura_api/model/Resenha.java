@@ -3,6 +3,7 @@ package ifgoiano.gestor_leitura_api.model;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 @Entity
 @Table(name = "resenha")
@@ -18,7 +19,7 @@ public class Resenha implements Serializable {
     private String texto;
 
     @Column(nullable = false)
-    private float avaliacao;
+    private Double avaliacao;
 
     @ManyToOne
     @JoinColumn(name = "leitor_id")
@@ -28,62 +29,50 @@ public class Resenha implements Serializable {
     @JoinColumn(name = "livro_id")
     private Livro livro;
 
-    public Resenha(){
-
-    }
-
-    public Resenha(Long id, String texto, float avaliacao, Leitor leitor, Livro livro) {
-        this.id = id;
-        this.texto = texto;
+    public Resenha(Double avaliacao, Long id, Leitor leitor, Livro livro, String texto) {
         this.avaliacao = avaliacao;
+        this.id = id;
         this.leitor = leitor;
         this.livro = livro;
+        this.texto = texto;
     }
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
-        result = prime * result + ((texto == null) ? 0 : texto.hashCode());
-        result = prime * result + Float.floatToIntBits(avaliacao);
-        result = prime * result + ((leitor == null) ? 0 : leitor.hashCode());
-        result = prime * result + ((livro == null) ? 0 : livro.hashCode());
-        return result;
+        int hash = 7;
+        hash = 61 * hash + Objects.hashCode(this.id);
+        hash = 61 * hash + Objects.hashCode(this.texto);
+        hash = 61 * hash + Objects.hashCode(this.avaliacao);
+        hash = 61 * hash + Objects.hashCode(this.leitor);
+        hash = 61 * hash + Objects.hashCode(this.livro);
+        return hash;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
-        Resenha other = (Resenha) obj;
-        if (id == null) {
-            if (other.id != null)
-                return false;
-        } else if (!id.equals(other.id))
+        }
+        final Resenha other = (Resenha) obj;
+        if (!Objects.equals(this.texto, other.texto)) {
             return false;
-        if (texto == null) {
-            if (other.texto != null)
-                return false;
-        } else if (!texto.equals(other.texto))
+        }
+        if (!Objects.equals(this.id, other.id)) {
             return false;
-        if (Float.floatToIntBits(avaliacao) != Float.floatToIntBits(other.avaliacao))
+        }
+        if (!Objects.equals(this.avaliacao, other.avaliacao)) {
             return false;
-        if (leitor == null) {
-            if (other.leitor != null)
-                return false;
-        } else if (!leitor.equals(other.leitor))
+        }
+        if (!Objects.equals(this.leitor, other.leitor)) {
             return false;
-        if (livro == null) {
-            if (other.livro != null)
-                return false;
-        } else if (!livro.equals(other.livro))
-            return false;
-        return true;
+        }
+        return Objects.equals(this.livro, other.livro);
     }
 
     public Long getId() {
@@ -102,11 +91,11 @@ public class Resenha implements Serializable {
         this.texto = texto;
     }
 
-    public float getAvaliacao() {
+    public Double getAvaliacao() {
         return avaliacao;
     }
 
-    public void setAvaliacao(float avaliacao) {
+    public void setAvaliacao(Double avaliacao) {
         this.avaliacao = avaliacao;
     }
 
@@ -125,4 +114,5 @@ public class Resenha implements Serializable {
     public void setLivro(Livro livro) {
         this.livro = livro;
     }
+
 }

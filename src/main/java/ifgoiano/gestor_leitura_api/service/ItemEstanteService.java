@@ -35,12 +35,17 @@ public class ItemEstanteService {
         return mapper.toResponseList(itens);
     }
 
+    public ItemEstanteResponseDTO create (ItemEstanteRequestDTO dto){
+         logger.info(() -> "Add livro: " + dto.livro() + " a estante");
+         ItemEstante novo = mapper.toEntity(dto);
+         ItemEstante salvo = itemEstanteRepository.save(novo);
+         return mapper.toResponse(novo);
+
+    }
+
     public ItemEstanteResponseDTO upadate(ItemEstanteRequestDTO dto) {
         logger.info(() -> "Atualizando item de id: " + dto.id());
         ItemEstante existing = itemEstanteRepository.findByIdOrThrow(dto.id());
-        if (existing == null) {
-            throw new ItemEstanteNotFoundException(dto.id());
-        }
         ItemEstante atualizar = mapper.toEntity(dto);
         atualizar.setId(dto.id());
         ItemEstante atualizada = itemEstanteRepository.save(atualizar);

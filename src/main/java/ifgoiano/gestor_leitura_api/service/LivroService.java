@@ -2,12 +2,15 @@ package ifgoiano.gestor_leitura_api.service;
 
 import java.util.logging.Logger;
 
+import org.springframework.stereotype.Service;
+
 import ifgoiano.gestor_leitura_api.dto.response.LivroResponseDTO;
 import ifgoiano.gestor_leitura_api.mapper.LivroMapper;
 import ifgoiano.gestor_leitura_api.model.Livro;
 import ifgoiano.gestor_leitura_api.repository.LivroRepository;
 import jakarta.transaction.Transactional;
 
+@Service
 public class LivroService {
 
     private static final Logger logger = Logger.getLogger(LivroService.class.getName());
