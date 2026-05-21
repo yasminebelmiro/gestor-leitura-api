@@ -1,35 +1,71 @@
 package ifgoiano.gestor_leitura_api.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
+import java.io.Serial;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Entity
-@Table(name = "editora")
+@Table(
+        name = "editora",
+        uniqueConstraints = @UniqueConstraint(name = "uk_editora_nome", columnNames = "nome")
+)
 public class Editora implements Serializable {
 
-    private static final Long SerialVersionUID = 1L;
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+
+    @NotBlank(message = "O nome da editora é obrigatório.")
+    @Size(max = 150, message = "O nome da editora deve ter no máximo 150 caracteres.")
+    @Column(nullable = false, length = 150)
     private String nome;
 
-    @OneToMany(mappedBy="editora")
-    private List<Livro> obras;
+    @OneToMany(mappedBy = "editora")
+    private List<Livro> obras = new ArrayList<>();
 
     public Editora(Long id, String nome, List<Livro> obras) {
         this.id = id;
         this.nome = nome;
-        this.obras = obras;
+        this.obras = obras != null ? obras : new ArrayList<>();
     }
 
-    public static Long getSerialversionuid() {
-        return SerialVersionUID;
+    public Editora() {
+    }
+
+    public String catalogo() {
+        if (obras == null || obras.isEmpty()) {
+            return "Nenhuma obra cadastrada para esta editora.";
+        }
+
+        return obras.stream()
+                .map(Livro::getTitulo)
+                .filter(Objects::nonNull)
+                .collect(Collectors.joining(", "));
+    }
+
+    public String lancamentosDoAno(int ano) {
+        if (obras == null || obras.isEmpty()) {
+            return "Nenhum lançamento encontrado.";
+        }
+
+        String resultado = obras.stream()
+                .filter(livro -> livro.getDataPublicacao() != null)
+                .filter(livro -> livro.getDataPublicacao().getYear() == ano)
+                .map(Livro::getTitulo)
+                .collect(Collectors.joining(", "));
+
+        return resultado.isBlank() ? "Nenhum lançamento encontrado." : resultado;
     }
 
     public Long getId() {
@@ -53,16 +89,12 @@ public class Editora implements Serializable {
     }
 
     public void setObras(List<Livro> obras) {
-        this.obras = obras;
+        this.obras = obras != null ? obras : new ArrayList<>();
     }
 
     @Override
     public int hashCode() {
-        int hash = 5;
-        hash = 13 * hash + Objects.hashCode(this.id);
-        hash = 13 * hash + Objects.hashCode(this.nome);
-        hash = 13 * hash + Objects.hashCode(this.obras);
-        return hash;
+        return getClass().hashCode();
     }
 
     @Override
