@@ -1,7 +1,10 @@
 package ifgoiano.gestor_leitura_api.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -9,16 +12,21 @@ import java.util.Objects;
 @Table(name = "genero")
 public class Genero implements Serializable {
 
-    private static final long SerialVersionUID = 1L;
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @NotBlank(message = "O nome do gênero é obrigatório.")
+    @Size(max = 100, message = "O nome do gênero deve ter no máximo 100 caracteres.")
+    @Column(nullable = false, length = 100)
     private String nome;
 
-    @Column(nullable = false)
+    @NotBlank(message = "A descrição do gênero é obrigatória.")
+    @Size(max = 500, message = "A descrição do gênero deve ter no máximo 500 caracteres.")
+    @Column(nullable = false, length = 500)
     private String descricao;
 
     public Genero() {
@@ -64,23 +72,9 @@ public class Genero implements Serializable {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final Genero other = (Genero) obj;
-        if (!Objects.equals(this.nome, other.nome)) {
-            return false;
-        }
-        if (!Objects.equals(this.descricao, other.descricao)) {
-            return false;
-        }
-        return Objects.equals(this.id, other.id);
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Genero genero)) return false;
+        return id != null && Objects.equals(id, genero.id);
     }
 }

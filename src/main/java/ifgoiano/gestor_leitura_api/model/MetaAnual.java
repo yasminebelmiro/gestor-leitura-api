@@ -1,31 +1,43 @@
 package ifgoiano.gestor_leitura_api.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 
+import java.io.Serial;
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.Objects;
 
 @Entity
-@Table(name = "meta_anual")
+@Table(
+        name = "meta_anual",
+        uniqueConstraints = @UniqueConstraint(name = "uk_meta_leitor_ano", columnNames = {"leitor_id", "ano"})
+)
 public class MetaAnual implements Serializable {
 
-    private static final long SerialVersionUID = 1L;
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Min(value = 1900, message = "O ano da meta é inválido.")
+    @Max(value = 2100, message = "O ano da meta é inválido.")
     @Column(nullable = false)
     private int ano;
 
-    @Column(nullable = false)
+    @Positive(message = "A quantidade alvo deve ser maior que zero.")
+    @Column(name = "quantidade_alvo", nullable = false)
     private int quantidadeAlvo;
 
-    @Column(nullable = false)
+    @PositiveOrZero(message = "A quantidade alcançada não pode ser negativa.")
+    @Column(name = "quantidade_alcancada", nullable = false)
     private int quantidadeAlcancada;
 
-    @ManyToOne
-    @JoinColumn(name = "leitor_id")
+    @NotNull(message = "A meta anual deve pertencer a um leitor.")
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "leitor_id", nullable = false)
     private Leitor leitor;
 
     public MetaAnual() {
@@ -40,6 +52,28 @@ public class MetaAnual implements Serializable {
         this.leitor = leitor;
     }
 
+    public void atualizarProgresso(int livrosLidos) {
+        if (livrosLidos < 0) {
+            throw new IllegalArgumentException("A quantidade de livros lidos não pode ser negativa.");
+        }
+        this.quantidadeAlcancada = livrosLidos;
+    }
+
+    public boolean metaBatida() {
+        return quantidadeAlcancada >= quantidadeAlvo;
+    }
+
+    public double percentualConclusao() {
+        if (quantidadeAlvo <= 0) {
+            return 0.0;
+        }
+        return (quantidadeAlcancada * 100.0) / quantidadeAlvo;
+    }
+
+    public static MetaAnual criarParaAnoAtual(Leitor leitor, int quantidadeAlvo) {
+        return new MetaAnual(null, LocalDate.now().getYear(), quantidadeAlvo, 0, leitor);
+    }
+
     @Override
     public int hashCode() {
         int hash = 3;
@@ -52,30 +86,10 @@ public class MetaAnual implements Serializable {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final MetaAnual other = (MetaAnual) obj;
-        if (this.ano != other.ano) {
-            return false;
-        }
-        if (this.quantidadeAlvo != other.quantidadeAlvo) {
-            return false;
-        }
-        if (this.quantidadeAlcancada != other.quantidadeAlcancada) {
-            return false;
-        }
-        if (!Objects.equals(this.id, other.id)) {
-            return false;
-        }
-        return Objects.equals(this.leitor, other.leitor);
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof MetaAnual meta)) return false;
+        return id != null && Objects.equals(id, meta.id);
     }
 
     public Long getId() {

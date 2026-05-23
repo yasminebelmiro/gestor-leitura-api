@@ -2,20 +2,25 @@ package ifgoiano.gestor_leitura_api.model;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Stream;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 @Entity
-@Table(name = "leitor")
+@Table(
+        name = "leitor",
+        uniqueConstraints = {
+                @UniqueConstraint(name = "uk_leitor_email", columnNames = "email"),
+                @UniqueConstraint(name = "uk_leitor_nickname", columnNames = "nickname")
+        }
+)
 public class Leitor implements Serializable {
 
     @Serial
@@ -25,31 +30,114 @@ public class Leitor implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @NotBlank(message = "O nickname é obrigatório.")
+    @Size(min = 3, max = 80, message = "O nickname deve ter entre 3 e 80 caracteres.")
+    @Column(name = "nickname", nullable = false, length = 80)
     private String nickName;
 
-    @Column(nullable = false)
+    @NotBlank(message = "O e-mail é obrigatório.")
+    @Email(message = "Informe um e-mail válido.")
+    @Size(max = 180, message = "O e-mail deve ter no máximo 180 caracteres.")
+    @Column(nullable = false, length = 180)
     private String email;
 
-    @Column(nullable = false)
+    @NotBlank(message = "A senha é obrigatória.")
+    @Size(min = 8, max = 255, message = "A senha deve ter no mínimo 8 caracteres.")
+    @Column(nullable = false, length = 255)
     private String senha;
 
     @OneToMany(mappedBy = "leitor", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Estante> estantes;
+    private List<Estante> estantes = new ArrayList<>();
 
     @OneToMany(mappedBy = "leitor", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<MetaAnual> metas;
+    private List<MetaAnual> metas = new ArrayList<>();
 
     public Leitor() {
 
     }
 
-    public Leitor(List<Estante> estantes, Long id, String nickName, String email, List<MetaAnual> metas) {
-        this.estantes = estantes;
+    public Leitor(List<Estante> estantes, Long id, String nickName, String email, String senha, List<MetaAnual> metas) {
+        this.estantes = estantes != null ? estantes : new ArrayList<>();
         this.id = id;
         this.nickName = nickName;
         this.email = email;
-        this.metas = metas;
+        this.senha = senha;
+        this.metas = metas != null ? metas : new ArrayList<>();
+    }
+
+    public Estante criarEstante(String nome) {
+        Estante estante = new Estante();
+        estante.setNome(nome);
+        estante.setLeitor(this);
+        this.estantes.add(estante);
+        return estante;
+    }
+
+    public void adicionarMeta(MetaAnual meta) {
+        if (meta == null) {
+            throw new IllegalArgumentException("A meta anual não pode ser nula.");
+        }
+        if (buscarMetaPorAno(meta.getAno()).isPresent()) {
+            throw new IllegalArgumentException("O leitor já possui meta cadastrada para o ano " + meta.getAno() + ".");
+        }
+        meta.setLeitor(this);
+        this.metas.add(meta);
+    }
+
+    public Optional<MetaAnual> buscarMetaPorAno(int ano) {
+        return metas.stream()
+                .filter(meta -> meta.getAno() == ano)
+                .findFirst();
+    }
+
+    public boolean verificarMetaBatida(int ano) {
+        return buscarMetaPorAno(ano)
+                .map(meta -> meta.getQuantidadeAlcancada() >= meta.getQuantidadeAlvo())
+                .orElse(false);
+    }
+
+    public double calcularProgressoGeral() {
+        List<ItemEstante> itensDoLeitor = streamItens().toList();
+
+        int totalPaginas = itensDoLeitor.stream()
+                .filter(item -> item.getLivro() != null)
+                .mapToInt(item -> item.getLivro().getNumeroPaginas())
+                .sum();
+
+        if (totalPaginas == 0) {
+            return 0.0;
+        }
+
+        int paginasLidas = itensDoLeitor.stream()
+                .mapToInt(ItemEstante::getPaginaAtualConsiderada)
+                .sum();
+
+        return (paginasLidas * 100.0) / totalPaginas;
+    }
+
+    public long contarLivrosLidosNoAno(int ano) {
+        return streamItens()
+                .filter(item -> item.getStatus() == StatusLeitura.LIDO)
+                .filter(item -> item.getDataConclusao() != null && item.getDataConclusao().getYear() == ano)
+                .map(ItemEstante::getLivro)
+                .filter(Objects::nonNull)
+                .map(livro -> livro.getId() != null ? livro.getId() : System.identityHashCode(livro))
+                .distinct()
+                .count();
+    }
+
+    public void recalcularMetaDoAno(int ano) {
+        buscarMetaPorAno(ano).ifPresent(meta -> meta.atualizarProgresso((int) contarLivrosLidosNoAno(ano)));
+    }
+
+    private Stream<ItemEstante> streamItens() {
+        if (estantes == null) {
+            return Stream.empty();
+        }
+
+        return estantes.stream()
+                .filter(Objects::nonNull)
+                .flatMap(estante -> estante.getItens() == null ? Stream.empty() : estante.getItens().stream());
     }
 
     public static long getSerialversionuid() {
@@ -101,7 +189,7 @@ public class Leitor implements Serializable {
     }
 
     public void setMetas(List<MetaAnual> metas) {
-        this.metas = metas;
+        this.metas = metas != null ? metas : new ArrayList<>();
     }
 
     @Override
@@ -118,45 +206,10 @@ public class Leitor implements Serializable {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        Leitor other = (Leitor) obj;
-        if (id == null) {
-            if (other.id != null)
-                return false;
-        } else if (!id.equals(other.id))
-            return false;
-        if (nickName == null) {
-            if (other.nickName != null)
-                return false;
-        } else if (!nickName.equals(other.nickName))
-            return false;
-        if (email == null) {
-            if (other.email != null)
-                return false;
-        } else if (!email.equals(other.email))
-            return false;
-        if (senha == null) {
-            if (other.senha != null)
-                return false;
-        } else if (!senha.equals(other.senha))
-            return false;
-        if (estantes == null) {
-            if (other.estantes != null)
-                return false;
-        } else if (!estantes.equals(other.estantes))
-            return false;
-        if (metas == null) {
-            if (other.metas != null)
-                return false;
-        } else if (!metas.equals(other.metas))
-            return false;
-        return true;
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Leitor leitor)) return false;
+        return id != null && Objects.equals(id, leitor.id);
     }
 
 }

@@ -1,32 +1,45 @@
 package ifgoiano.gestor_leitura_api.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
 
 @Entity
-@Table(name = "resenha")
+@Table(
+        name = "resenha",
+        uniqueConstraints = @UniqueConstraint(name = "uk_resenha_leitor_livro", columnNames = {"leitor_id", "livro_id"})
+)
 public class Resenha implements Serializable {
 
-    private static final long SerialVersionUID = 1L;
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @NotBlank(message = "O texto da resenha é obrigatório.")
+    @Size(max = 2000, message = "A resenha deve ter no máximo 2000 caracteres.")
+    @Column(nullable = false, length = 2000)
     private String texto;
 
+    @NotNull(message = "A avaliação é obrigatória.")
+    @DecimalMin(value = "0.0", message = "A avaliação mínima é 0.")
+    @DecimalMax(value = "5.0", message = "A avaliação máxima é 5.")
     @Column(nullable = false)
     private Double avaliacao;
 
-    @ManyToOne
-    @JoinColumn(name = "leitor_id")
+    @NotNull(message = "A resenha deve possuir um leitor.")
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "leitor_id", nullable = false)
     private Leitor leitor;
 
-    @ManyToOne
-    @JoinColumn(name = "livro_id")
+    @NotNull(message = "A resenha deve possuir um livro.")
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "livro_id", nullable = false)
     private Livro livro;
 
     public Resenha(Double avaliacao, Long id, Leitor leitor, Livro livro, String texto) {
@@ -35,6 +48,10 @@ public class Resenha implements Serializable {
         this.leitor = leitor;
         this.livro = livro;
         this.texto = texto;
+    }
+
+    public Resenha() {
+
     }
 
     @Override

@@ -1,13 +1,20 @@
 package ifgoiano.gestor_leitura_api.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.Objects;
 
 @Entity
-@Table(name = "registro_leitura")
+@Table(
+        name = "registro_leitura",
+        uniqueConstraints = @UniqueConstraint(name = "uk_registro_item_data", columnNames = {"item_id", "data"})
+)
 public class RegistroLeitura implements Serializable {
 
     private static final Long serialVersionUID = 1L;
@@ -16,30 +23,51 @@ public class RegistroLeitura implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotNull(message = "A data do registro é obrigatória.")
     @Column(nullable = false)
-    private Date data;
+    private LocalDate data;
 
-    @Column(nullable = false)
+    @Min(value = 0, message = "A página atual não pode ser menor que zero.")
+    @Column(name = "pagina_atual", nullable = false)
     private int paginaAtual;
 
+    @Size(max = 1000, message = "O comentário deve ter no máximo 1000 caracteres.")
     @Column(length = 1000)
     private String comentarios;
 
-    @ManyToOne
-    @JoinColumn(name = "item_id")
+    @NotNull(message = "O registro deve pertencer a um item de estante.")
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "item_id", nullable = false)
     private ItemEstante item;
 
-    public RegistroLeitura() {
-
-    }
-
-    public RegistroLeitura(Long id, ItemEstante item, Date data, int paginaAtual, String comentarios) {
+    public RegistroLeitura(Long id, ItemEstante item, LocalDate data, int paginaAtual, String comentarios) {
         this.id = id;
         this.item = item;
         this.data = data;
         this.paginaAtual = paginaAtual;
         this.comentarios = comentarios;
     }
+
+    public RegistroLeitura() {
+
+    }
+
+    public void atualizarProgresso(int pagina, String comentario) {
+        if (item == null || item.getLivro() == null) {
+            throw new IllegalArgumentException("O registro deve estar vinculado a um item com livro.");
+        }
+        if (pagina < 0) {
+            throw new IllegalArgumentException("A página atual não pode ser menor que zero.");
+        }
+        if (pagina > item.getLivro().getNumeroPaginas()) {
+            throw new IllegalArgumentException("A página atual não pode ultrapassar o total de páginas do livro.");
+        }
+
+        this.paginaAtual = pagina;
+        this.comentarios = comentario;
+    }
+
+
 
     @Override
     public int hashCode() {
@@ -53,30 +81,10 @@ public class RegistroLeitura implements Serializable {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final RegistroLeitura other = (RegistroLeitura) obj;
-        if (this.paginaAtual != other.paginaAtual) {
-            return false;
-        }
-        if (!Objects.equals(this.comentarios, other.comentarios)) {
-            return false;
-        }
-        if (!Objects.equals(this.id, other.id)) {
-            return false;
-        }
-        if (!Objects.equals(this.data, other.data)) {
-            return false;
-        }
-        return Objects.equals(this.item, other.item);
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof RegistroLeitura registro)) return false;
+        return id != null && Objects.equals(id, registro.id);
     }
 
     public Long getId() {
@@ -87,11 +95,11 @@ public class RegistroLeitura implements Serializable {
         this.id = id;
     }
 
-    public Date getData() {
+    public LocalDate getData() {
         return data;
     }
 
-    public void setData(Date data) {
+    public void setData(LocalDate data) {
         this.data = data;
     }
 
