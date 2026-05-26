@@ -32,9 +32,9 @@ public class ItemEstanteController {
         return ResponseEntity.ok(itemEstanteService.findAllByEstanteId(estanteId));
     }
 
-    @PutMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ItemEstanteResponseDTO> update(@RequestBody ItemEstanteRequestDTO dto){
-        return ResponseEntity.ok(itemEstanteService.upadate(dto));
+    @PutMapping(value = "/{id}",produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ItemEstanteResponseDTO> update(@RequestBody ItemEstanteRequestDTO dto, @PathVariable Long id){
+        return ResponseEntity.ok(itemEstanteService.upadate(dto,id));
     }
 
     @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
