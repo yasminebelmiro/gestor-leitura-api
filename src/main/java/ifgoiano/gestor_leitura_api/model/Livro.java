@@ -2,15 +2,29 @@ package ifgoiano.gestor_leitura_api.model;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PastOrPresent;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(
@@ -74,7 +88,7 @@ public class Livro implements Serializable {
     @NotNull(message = "A data de publicação é obrigatória.")
     @PastOrPresent(message = "A data de publicação não pode estar no futuro.")
     @Column(name = "data_publicacao", nullable = false)
-    private LocalDate dataPublicacao;
+    private String dataPublicacao;
 
     @NotBlank(message = "A URL da capa é obrigatória.")
     @Size(max = 1000, message = "A URL da capa deve ter no máximo 1000 caracteres.")
@@ -87,7 +101,7 @@ public class Livro implements Serializable {
 
     public Livro(Long id, String googleVolumeId, String titulo, String isbn, int numeroPaginas,
                  List<Autor> autores, List<Genero> generos, List<Resenha> avaliacao,
-                 Editora editora, LocalDate dataPublicacao, String capa_url) {
+                 Editora editora, String dataPublicacao, String capa_url) {
         this.id = id;
         this.googleVolumeId = googleVolumeId;
         this.titulo = titulo;
@@ -250,11 +264,11 @@ public class Livro implements Serializable {
         this.editora = editora;
     }
 
-    public LocalDate getDataPublicacao() {
+    public String getDataPublicacao() {
         return dataPublicacao;
     }
 
-    public void setDataPublicacao(LocalDate dataPublicacao) {
+    public void setDataPublicacao(String dataPublicacao) {
         this.dataPublicacao = dataPublicacao;
     }
 

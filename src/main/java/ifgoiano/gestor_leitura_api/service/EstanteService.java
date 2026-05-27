@@ -10,7 +10,9 @@ import ifgoiano.gestor_leitura_api.dto.response.EstanteResponseDTO;
 import ifgoiano.gestor_leitura_api.exceptions.EstanteNotFoundException;
 import ifgoiano.gestor_leitura_api.mapper.EstanteMapper;
 import ifgoiano.gestor_leitura_api.model.Estante;
+import ifgoiano.gestor_leitura_api.model.Leitor;
 import ifgoiano.gestor_leitura_api.repository.EstanteRepository;
+import ifgoiano.gestor_leitura_api.repository.LeitorRepository;
 import ifgoiano.gestor_leitura_api.repository.LivroRepository;
 
 @Service
@@ -19,11 +21,14 @@ public class EstanteService {
     private static final Logger logger = Logger.getLogger(EstanteService.class.getName());
     private final EstanteRepository estanteRepository;
     private final LivroRepository livroRepository;
+    private final LeitorRepository leitorRepository;
     private final EstanteMapper mapper;
 
-    public EstanteService(EstanteRepository estanteRepository, LivroRepository livroRepository, EstanteMapper mapper) {
+    public EstanteService(EstanteRepository estanteRepository, LivroRepository livroRepository,
+            LeitorRepository leitorRepository, EstanteMapper mapper) {
         this.estanteRepository = estanteRepository;
         this.livroRepository = livroRepository;
+        this.leitorRepository = leitorRepository;
         this.mapper = mapper;
     }
 
@@ -44,8 +49,15 @@ public class EstanteService {
 
     public EstanteResponseDTO create(EstanteResquestDTO dto) {
         logger.info(() -> "Criando estante" + dto.name());
+
+        Leitor leitor = leitorRepository.findByIdOrThrow(dto.leitorId());
         Estante novaEstante = mapper.toEntity(dto);
-        Estante salva = estanteRepository.save(novaEstante);
+
+        novaEstante.setLeitor(leitor);
+        leitor.criarEstante(dto.name());
+        
+        Estante salva = estanteRepository.save(novaEstante);    
+
         return mapper.toResponse(salva);
     }
 

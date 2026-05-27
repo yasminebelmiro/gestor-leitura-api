@@ -1,6 +1,5 @@
 package ifgoiano.gestor_leitura_api.repository;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -9,7 +8,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import ifgoiano.gestor_leitura_api.exceptions.LivroNotFoundException;
 import ifgoiano.gestor_leitura_api.model.Livro;
 
 @Repository
@@ -27,12 +25,12 @@ public interface LivroRepository extends JpaRepository<Livro, Long> {
    // Busca livros por editora.
    List<Livro> findByEditoraId(Long editoraId);
 
-   // Busca livros publicados dentro de um intervalo de datas.
-   List<Livro> findByDataPublicacaoBetween(Date dataInicio, Date dataFim);
+//    // Busca livros publicados dentro de um intervalo de datas.
+//    List<Livro> findByDataPublicacaoBetween(Date dataInicio, Date dataFim);
 
-   // Lista os livros publicados em determinado ano.
-   @Query("SELECT l FROM Livro l WHERE YEAR(l.dataPublicacao) = :ano")
-   List<Livro> findLancamentosDoAno(@Param("ano") int ano);
+//    // Lista os livros publicados em determinado ano.
+//    @Query("SELECT l FROM Livro l WHERE YEAR(l.dataPublicacao) = :ano")
+//    List<Livro> findLancamentosDoAno(@Param("ano") int ano);
 
    // Lista livros de um determinado autor.
    @Query("SELECT l FROM Livro l JOIN l.autores a WHERE a.id = :autorId")
@@ -58,16 +56,16 @@ public interface LivroRepository extends JpaRepository<Livro, Long> {
    // Busca livros com um numero de paginas maior ou igual.
    List<Livro> findByNumeroPaginasGreaterThanEqual(int numeroPaginas);
 
-   // Busca livros lançados em um dado periodo.
-   @Query("""
-           SELECT l FROM Livro l
-           WHERE l.dataPublicacao BETWEEN :inicio AND :fim
-           ORDER BY l.dataPublicacao DESC
-           """)
-   List<Livro> findLancamentosNoPeriodo(
-           @Param("inicio") Date inicio,
-           @Param("fim") Date fim
-   );
+//    // Busca livros lançados em um dado periodo.
+//    @Query("""
+//            SELECT l FROM Livro l
+//            WHERE l.dataPublicacao BETWEEN :inicio AND :fim
+//            ORDER BY l.dataPublicacao DESC
+//            """)
+//    List<Livro> findLancamentosNoPeriodo(
+//            @Param("inicio") Date inicio,
+//            @Param("fim") Date fim
+//    );
 
    // Busca um autor relacionado a uma editora.
    @Query("""

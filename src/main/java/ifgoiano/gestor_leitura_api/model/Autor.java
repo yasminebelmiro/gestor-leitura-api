@@ -1,14 +1,21 @@
 package ifgoiano.gestor_leitura_api.model;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 
 @Entity
@@ -52,19 +59,19 @@ public class Autor implements Serializable {
                 .collect(Collectors.joining(", "));
     }
 
-    public String lancamentosDoAno(int ano) {
-        if (obras == null || obras.isEmpty()) {
-            return "Nenhum lançamento encontrado.";
-        }
+    // public String lancamentosDoAno(int ano) {
+    //     if (obras == null || obras.isEmpty()) {
+    //         return "Nenhum lançamento encontrado.";
+    //     }
 
-        String resultado = obras.stream()
-                .filter(livro -> livro.getDataPublicacao() != null)
-                .filter(livro -> livro.getDataPublicacao().getYear() == ano)
-                .map(Livro::getTitulo)
-                .collect(Collectors.joining(", "));
+    //     String resultado = obras.stream()
+    //             .filter(livro -> livro.getDataPublicacao() != null)
+    //             .filter(livro -> livro.getDataPublicacao().getYear() == ano)
+    //             .map(Livro::getTitulo)
+    //             .collect(Collectors.joining(", "));
 
-        return resultado.isBlank() ? "Nenhum lançamento encontrado." : resultado;
-    }
+    //     return resultado.isBlank() ? "Nenhum lançamento encontrado." : resultado;
+    // }
 
     public Long getId() {
         return id;

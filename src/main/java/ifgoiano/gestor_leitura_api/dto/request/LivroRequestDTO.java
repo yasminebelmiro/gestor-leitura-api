@@ -1,6 +1,5 @@
 package ifgoiano.gestor_leitura_api.dto.request;
 
-import java.util.Date;
 import java.util.List;
 
 import ifgoiano.gestor_leitura_api.model.Autor;
@@ -12,7 +11,7 @@ public record LivroRequestDTO(String googleId,
         List<Autor> autores,
         String descricao,
         Editora editora,
-        Date dataPublicacao,
+        String dataPublicacao,
         int numeroPaginas,
         List<Genero> generos,
         String capaUrl) {
