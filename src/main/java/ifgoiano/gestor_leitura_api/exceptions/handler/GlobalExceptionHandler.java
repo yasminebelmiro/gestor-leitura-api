@@ -14,6 +14,7 @@ import ifgoiano.gestor_leitura_api.exceptions.EstanteNotFoundException;
 import ifgoiano.gestor_leitura_api.exceptions.ExceptionResponse;
 import ifgoiano.gestor_leitura_api.exceptions.ItemEstanteNotFoundException;
 import ifgoiano.gestor_leitura_api.exceptions.LeitorNotFoundException;
+import ifgoiano.gestor_leitura_api.exceptions.LivroNotFoundException;
 import ifgoiano.gestor_leitura_api.exceptions.MetaAnualNotFoundException;
 import ifgoiano.gestor_leitura_api.exceptions.RegistroLeitutraNotfoundException;
 import ifgoiano.gestor_leitura_api.exceptions.ResenhaNotFoundException;
@@ -59,6 +60,13 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(MetaAnualNotFoundException.class)
     public final ResponseEntity<ExceptionResponse> handleMetaException(Exception ex, WebRequest request) {
+        ExceptionResponse exceptionResponse = new ExceptionResponse(new Date(), ex.getMessage(),
+                request.getDescription(false));
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(LivroNotFoundException.class)
+    public final ResponseEntity<ExceptionResponse> handleLivroException(Exception ex, WebRequest request) {
         ExceptionResponse exceptionResponse = new ExceptionResponse(new Date(), ex.getMessage(),
                 request.getDescription(false));
         return new ResponseEntity<>(exceptionResponse, HttpStatus.NOT_FOUND);

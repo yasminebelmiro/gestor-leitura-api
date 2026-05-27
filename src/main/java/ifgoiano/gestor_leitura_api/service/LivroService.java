@@ -1,10 +1,12 @@
 package ifgoiano.gestor_leitura_api.service;
 
+import java.util.Optional;
 import java.util.logging.Logger;
 
 import org.springframework.stereotype.Service;
 
 import ifgoiano.gestor_leitura_api.dto.response.LivroResponseDTO;
+import ifgoiano.gestor_leitura_api.exceptions.LivroNotFoundException;
 import ifgoiano.gestor_leitura_api.mapper.LivroMapper;
 import ifgoiano.gestor_leitura_api.model.Livro;
 import ifgoiano.gestor_leitura_api.repository.LivroRepository;
@@ -33,9 +35,22 @@ public class LivroService {
                 });
     }
 
-    public void delete(String googleId){
-        logger.info(() ->"Deletando livro: " + googleId);
-        livroRepository.deleteByGoogleVolumeId(googleId);
+    public void delete(String googleVolumeId) {
+        logger.info(() -> "Deletando livro: " + googleVolumeId);
+        livroRepository.deleteByGoogleVolumeId(googleVolumeId);
     }
+
+    public Double calcularMediaAvaliacoes(String googleVolumeId) {
+        return livroRepository.findByGoogleVolumeId(googleVolumeId)
+                .map(Livro::calcularMediaAvaliacoes)
+                .orElseThrow(() -> new LivroNotFoundException(googleVolumeId));
+    }
+
+    public String exibirFichaTecnicaCompleta(String googleVolumeId) {
+        return livroRepository.findByGoogleVolumeId(googleVolumeId).map(Livro::exibirFichaTecnicaCompleta)
+                .orElseThrow(() -> new LivroNotFoundException(googleVolumeId));
+    }
+
+    
 
 }

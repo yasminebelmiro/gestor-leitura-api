@@ -266,5 +266,6 @@ public class Livro implements Serializable {
         this.capa_url = capa_url;
     }
 
+
  
 }

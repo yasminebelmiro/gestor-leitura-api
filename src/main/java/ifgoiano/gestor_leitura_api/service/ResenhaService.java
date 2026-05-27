@@ -7,19 +7,29 @@ import org.springframework.stereotype.Service;
 
 import ifgoiano.gestor_leitura_api.dto.request.ResenhaRequestDTO;
 import ifgoiano.gestor_leitura_api.dto.response.ResenhaResponseDTO;
+import ifgoiano.gestor_leitura_api.exceptions.LivroNotFoundException;
 import ifgoiano.gestor_leitura_api.mapper.ResenhaMapper;
+import ifgoiano.gestor_leitura_api.model.Leitor;
+import ifgoiano.gestor_leitura_api.model.Livro;
 import ifgoiano.gestor_leitura_api.model.Resenha;
+import ifgoiano.gestor_leitura_api.repository.LeitorRepository;
+import ifgoiano.gestor_leitura_api.repository.LivroRepository;
 import ifgoiano.gestor_leitura_api.repository.ResenhaRepository;
 
 @Service
 public class ResenhaService {
     private static final Logger logger = Logger.getLogger(ResenhaService.class.getName());
     private final ResenhaRepository repository;
+    private final LivroRepository livroRepository;
+    private final LeitorRepository leitorRepository;
     private final ResenhaMapper mapper;
 
-    public ResenhaService(ResenhaMapper mapper, ResenhaRepository repository) {
-        this.mapper = mapper;
+    public ResenhaService(ResenhaRepository repository, LivroRepository livroRepository,
+            LeitorRepository leitorRepository, ResenhaMapper mapper) {
         this.repository = repository;
+        this.livroRepository = livroRepository;
+        this.leitorRepository = leitorRepository;
+        this.mapper = mapper;
     }
 
     public ResenhaResponseDTO fingById(Long id) {
@@ -35,14 +45,26 @@ public class ResenhaService {
     }
 
     public ResenhaResponseDTO create(ResenhaRequestDTO dto) {
-        logger.info(() -> "Criando resenha do livro" + dto.idLivro());
+        logger.info(() -> "Criando resenha do livro" + dto.googleVolumeId());
+
+        Livro livro = livroRepository.findByGoogleVolumeId(dto.googleVolumeId()).
+        orElseThrow(() -> new LivroNotFoundException(dto.googleVolumeId()));
+
+        Leitor leitor = leitorRepository.findByIdOrThrow(dto.idLeitor());
+        
         Resenha novo = mapper.toEntity(dto);
+
+        novo.setLeitor(leitor);
+        novo.setLivro(livro);
+        livro.adicionarResenha(novo);
+
         Resenha salvo = repository.save(novo);
+
         return mapper.toResponse(salvo);
     }
 
     public ResenhaResponseDTO update(Long id, ResenhaRequestDTO dto) {
-        logger.info(() -> "Atualizando resenha do livro" + dto.idLivro());
+        logger.info(() -> "Atualizando resenha do livro" + dto.googleVolumeId());
         repository.findByIdOrThrow(id);
         Resenha atualizar = mapper.toEntity(dto);
         atualizar.setId(id);
