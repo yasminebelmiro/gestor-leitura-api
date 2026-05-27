@@ -47,10 +47,9 @@ public class EstanteController {
         EstanteResponseDTO novo = estanteService.create(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(novo);
     }
-
-    @PutMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<EstanteResponseDTO> update(@PathVariable Long id, @RequestBody EstanteResquestDTO dto) {
-        return ResponseEntity.ok(estanteService.update(id, dto));
+    @PutMapping(value = "/{id}",produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<EstanteResponseDTO> update(@PathVariable Long id,@RequestBody EstanteResquestDTO dto){
+        return ResponseEntity.ok(estanteService.update(id,dto));
     }
 
     @DeleteMapping(value = "/{id}/leitor/{leitorId}", produces = MediaType.APPLICATION_JSON_VALUE)
