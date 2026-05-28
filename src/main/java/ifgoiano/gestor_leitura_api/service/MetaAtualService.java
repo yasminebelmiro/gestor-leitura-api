@@ -7,8 +7,11 @@ import org.springframework.stereotype.Service;
 
 import ifgoiano.gestor_leitura_api.dto.request.MetaAnualRequestDTO;
 import ifgoiano.gestor_leitura_api.dto.response.MetaAnualResponseDTO;
+import ifgoiano.gestor_leitura_api.exceptions.MetaAnualNotFoundException;
 import ifgoiano.gestor_leitura_api.mapper.MetaAnualMapper;
+import ifgoiano.gestor_leitura_api.model.Leitor;
 import ifgoiano.gestor_leitura_api.model.MetaAnual;
+import ifgoiano.gestor_leitura_api.repository.LeitorRepository;
 import ifgoiano.gestor_leitura_api.repository.MetaAnualRepository;
 
 @Service
@@ -18,10 +21,12 @@ public class MetaAtualService {
 
     private final MetaAnualMapper mapper;
     private final MetaAnualRepository repository;
+    private final LeitorRepository leitorRepository;
 
-    public MetaAtualService(MetaAnualMapper mapper, MetaAnualRepository repository) {
+    public MetaAtualService(MetaAnualMapper mapper, MetaAnualRepository repository, LeitorRepository leitorRepository) {
         this.mapper = mapper;
         this.repository = repository;
+        this.leitorRepository = leitorRepository;
     }
 
     public MetaAnualResponseDTO findById(Long id) {
@@ -29,6 +34,7 @@ public class MetaAtualService {
         MetaAnual existing = repository.findByIdOrThrow(id);
         return mapper.toResponse(existing);
     }
+
 
     public List<MetaAnualResponseDTO> listByLeitor(Long id) {
         logger.info("Listando meta por id do leitor " + id);
@@ -38,8 +44,12 @@ public class MetaAtualService {
 
     public MetaAnualResponseDTO create(MetaAnualRequestDTO dto) {
         logger.info("Criando MetaAnual do ano de " + dto.ano());
+        Leitor leitor = leitorRepository.findByIdOrThrow(dto.leitorId());
         MetaAnual novo = mapper.toEntity(dto);
+        novo.setLeitor(leitor);
+        leitor.adicionarMeta(novo);
         MetaAnual salvo = repository.save(novo);
+        
         return mapper.toResponse(salvo);
     }
 

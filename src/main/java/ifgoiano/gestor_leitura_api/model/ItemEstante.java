@@ -85,11 +85,20 @@ public class ItemEstante implements Serializable {
         if (novaEstante == null) {
             throw new IllegalArgumentException("A nova estante não pode ser nula.");
         }
+        
         if (this.estante != null && this.estante.getLeitor() != null && novaEstante.getLeitor() != null
                 && !this.estante.getLeitor().equals(novaEstante.getLeitor())) {
             throw new IllegalArgumentException("Não é permitido mover o item para a estante de outro leitor.");
         }
+
+        if (this.estante != null && this.estante.getItens() != null) {
+            this.estante.getItens().remove(this);
+        }
         this.estante = novaEstante;
+
+        if (novaEstante.getItens() != null) {
+            novaEstante.getItens().add(this);
+        }
     }
 
     public void marcarComoAbandonado() {

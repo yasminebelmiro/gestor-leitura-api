@@ -27,7 +27,7 @@ public interface MetaAnualRepository extends JpaRepository<MetaAnual, Long> {
     boolean existsByLeitorIdAndAno(Long leitorId, int ano);
 
     // Lista metas de todos os leitores para determinado ano.
-    List<MetaAnual> findByAno(int ano);
+    MetaAnual findByAno(int ano);
 
     // Verifica se a meta anual de um leitor foi batida.
     @Query("""
