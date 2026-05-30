@@ -17,8 +17,8 @@ public class OpenApiConfig {
         return new Info()
                 .title("Gestor de Leitura API")
                 .version("v1")
-                .description("API para gerenciamento de leitores, livros e suas leituras. Permite criar, atualizar e" +
-                        " deletar leitores, buscar livros via " +
-                        "integração com Google Books e gerenciar as leituras dos usuários.");
+                .description("API para gerenciamento literário que possibilita o controle de livros, estantes, metas e resenhas. " +
+                        "Oferece operações completas de CRUD para estantes, gerenciamento do progresso de leitura e " +
+                        "busca avançada de títulos integrada à API do Google Books.");
     }
 }

@@ -34,17 +34,20 @@ public class LivroController {
 
     @GetMapping("/buscar")
     @Operation(
-            summary = "Buscar livros na API do Google Books",
-            description = "Realiza uma busca de livros na API do Google Books com base no termo fornecido como parâmetro" +
-                    " 'q'. Retorna uma lista de livros correspondentes à busca.",
+            summary = "Buscar livros",
+            description = "Busca livros usando a API do Google Books com base na query fornecida",
             responses = {
                     @ApiResponse(
                             responseCode = "200",
-                            description = "Busca realizada com sucesso, retornando a lista de livros encontrados"
+                            description = "Busca realizada com sucesso"
                     ),
                     @ApiResponse(
                             responseCode = "400",
-                            description = "Parâmetro de busca 'q' ausente ou inválido"
+                            description = "Query de busca inválida"
+                    ),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "Erro interno do servidor"
                     )
             }
     )
@@ -55,9 +58,22 @@ public class LivroController {
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(
-            summary = "",
-            description = "",
-            responses = {}
+            summary = "Criar livro",
+            description = "Adiciona um novo livro à coleção com base nos dados fornecidos",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "201",
+                            description = "Livro criado com sucesso"
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "Dados de entrada inválidos"
+                    ),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "Erro interno do servidor"
+                    )
+            }
     )
     public ResponseEntity<Livro> create(@RequestBody LivroResponseDTO dto) {
         Livro novo = livroService.create(dto);
@@ -67,15 +83,19 @@ public class LivroController {
     @DeleteMapping(value = "/{googleId}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(
             summary = "Deletar livro",
-            description = "Remove um livro existente com base no googleId fornecido",
+            description = "Remove um livro da coleção com base no Google ID fornecido",
             responses = {
                     @ApiResponse(
                             responseCode = "204",
-                            description = "livro deletado com sucesso"
+                            description = "Livro deletado com sucesso"
                     ),
                     @ApiResponse(
                             responseCode = "404",
-                            description = "livro não encontrado"
+                            description = "Livro não encontrado"
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "Google ID fornecido é inválido"
                     )
             }
     )

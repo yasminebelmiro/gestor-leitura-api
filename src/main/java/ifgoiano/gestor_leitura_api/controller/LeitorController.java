@@ -27,11 +27,33 @@ public class LeitorController {
     }
 
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(
+            summary = "Buscar leitor por ID",
+            description = "Retorna os detalhes do leitor com base no ID fornecido",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Leitor encontrado com sucesso"
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Leitor não encontrado"
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "ID fornecido é inválido"
+                    ),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "Erro interno do servidor"
+                    )
+            }
+    )
     public ResponseEntity<LeitorResponseDTO> findById(@PathVariable Long id){
         return ResponseEntity.ok(leitorService.findById(id));
     }
 
-    @GetMapping(value = "/{email}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/email/{email}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(
             summary = "Buscar leitor por email",
             description = "Retorna os detalhes do leitor com base no email fornecido",
@@ -43,6 +65,14 @@ public class LeitorController {
                     @ApiResponse(
                             responseCode = "404",
                             description = "Leitor não encontrado"
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "Email fornecido é inválido"
+                    ),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "Erro interno do servidor"
                     )
             }
     )
