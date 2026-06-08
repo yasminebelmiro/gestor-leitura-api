@@ -9,6 +9,7 @@ import ifgoiano.gestor_leitura_api.dto.request.RegistroLeituraRequestDTO;
 import ifgoiano.gestor_leitura_api.dto.response.RegistroLeituraResponseDTO;
 import ifgoiano.gestor_leitura_api.mapper.RegistroLeituraMapper;
 import ifgoiano.gestor_leitura_api.model.RegistroLeitura;
+import ifgoiano.gestor_leitura_api.repository.ItemEstanteRepository;
 import ifgoiano.gestor_leitura_api.repository.RegistroLeituraRepository;
 
 @Service
@@ -18,10 +19,13 @@ public class RegistroLeituraService {
 
     private final RegistroLeituraMapper mapper;
     private final RegistroLeituraRepository repository;
+    private final ItemEstanteRepository itemRepository;
 
-    public RegistroLeituraService(RegistroLeituraMapper mapper, RegistroLeituraRepository repository) {
+    public RegistroLeituraService(RegistroLeituraMapper mapper, RegistroLeituraRepository repository,
+            ItemEstanteRepository itemRepository) {
         this.mapper = mapper;
         this.repository = repository;
+        this.itemRepository = itemRepository;
     }
 
     public RegistroLeituraResponseDTO findById(Long id) {
@@ -59,6 +63,13 @@ public class RegistroLeituraService {
         RegistroLeitura existing = repository.findByIdOrThrow(id);
         repository.delete(existing);
 
+    }
+
+    public void atualizarProgresso(Long itemId, Long registroId, int pagina, String comentario) {
+        RegistroLeitura registro = repository.findByIdOrThrow(registroId);
+        if (registro.getItem().getId().equals(itemId)) {
+            registro.atualizarProgresso(pagina, comentario);
+        }
     }
 
 }

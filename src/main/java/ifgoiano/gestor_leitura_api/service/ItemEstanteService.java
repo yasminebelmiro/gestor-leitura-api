@@ -1,4 +1,4 @@
-package ifgoiano.gestor_leitura_api.service;
+ package ifgoiano.gestor_leitura_api.service;
 
 import java.time.LocalDate;
 import java.util.List;
