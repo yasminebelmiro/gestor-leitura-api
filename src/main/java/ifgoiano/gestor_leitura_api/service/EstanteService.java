@@ -48,21 +48,18 @@ public class EstanteService {
     }
 
     public EstanteResponseDTO create(EstanteResquestDTO dto) {
-        logger.info(() -> "Criando estante" + dto.name());
+        logger.info(() -> "Criando estante" + dto.nome());
 
         Leitor leitor = leitorRepository.findByIdOrThrow(dto.leitorId());
-        Estante novaEstante = mapper.toEntity(dto);
+        Estante novaEstante = leitor.criarEstante(dto.nome());
 
-        novaEstante.setLeitor(leitor);
-        leitor.criarEstante(dto.name());
-        
         Estante salva = estanteRepository.save(novaEstante);    
 
         return mapper.toResponse(salva);
     }
 
     public EstanteResponseDTO update(Long id, EstanteResquestDTO dto) {
-        logger.info(() -> "Criando estante " + dto.name());
+        logger.info(() -> "Criando estante " + dto.nome());
         Estante existing = estanteRepository.findByIdAndLeitorId(id, dto.leitorId());
         if (existing == null) {
             throw new EstanteNotFoundException(id);
