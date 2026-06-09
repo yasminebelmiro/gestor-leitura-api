@@ -3,6 +3,8 @@ package ifgoiano.gestor_leitura_api.controller;
 import ifgoiano.gestor_leitura_api.dto.request.ItemEstanteRequestDTO;
 import ifgoiano.gestor_leitura_api.dto.response.ItemEstanteResponseDTO;
 import ifgoiano.gestor_leitura_api.service.ItemEstanteService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -19,27 +21,136 @@ public class ItemEstanteController {
 
     private final ItemEstanteService itemEstanteService;
 
-    public ItemEstanteController(ItemEstanteService itemEstanteService){
+    public ItemEstanteController(ItemEstanteService itemEstanteService) {
         this.itemEstanteService = itemEstanteService;
     }
 
     @GetMapping(value = "/itemEstante/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ItemEstanteResponseDTO> findById(@PathVariable Long id){
+    @Operation(
+            summary = "Buscar item da estante por ID",
+            description = "Retorna os detalhes do item da estante com base no ID fornecido",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Item da estante encontrado com sucesso"
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Item da estante não encontrado"
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "ID fornecido é inválido"
+                    ),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "Erro interno do servidor"
+                    )
+            }
+    )
+    public ResponseEntity<ItemEstanteResponseDTO> findById(@PathVariable Long id) {
         return ResponseEntity.ok(itemEstanteService.findById(id));
     }
+
     @GetMapping(value = "/estante/{estanteId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<ItemEstanteResponseDTO>> findAllByEstanteId(@PathVariable Long estanteId){
+    @Operation(
+            summary = "Buscar itens da estante por ID da estante",
+            description = "Retorna os detalhes dos itens da estante com base no ID da estante fornecido",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Itens da estante encontrados com sucesso"
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Itens da estante não encontrados"
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "ID da estante fornecido é inválido"
+                    ),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "Erro interno do servidor"
+                    )
+            }
+    )
+    public ResponseEntity<List<ItemEstanteResponseDTO>> findAllByEstanteId(@PathVariable Long estanteId) {
         return ResponseEntity.ok(itemEstanteService.findAllByEstanteId(estanteId));
     }
 
-    @PutMapping(value = "/{id}",produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ItemEstanteResponseDTO> update(@RequestBody ItemEstanteRequestDTO dto, @PathVariable Long id){
+    @PutMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(
+            summary = "Atualizar item da estante",
+            description = "Atualiza os detalhes do item da estante com base no ID fornecido",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Item da estante atualizado com sucesso"
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Item da estante não encontrado"
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "ID fornecido é inválido ou dados de atualização são inválidos"
+                    ),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "Erro interno do servidor"
+                    )
+            }
+    )
+    public ResponseEntity<ItemEstanteResponseDTO> update(@RequestBody ItemEstanteRequestDTO dto, @PathVariable Long id) {
         return ResponseEntity.ok(itemEstanteService.upadate(id, dto));
     }
 
     @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> delete(@PathVariable Long id){
+    @Operation(
+            summary = "Excluir item da estante",
+            description = "Exclui o item da estante com base no ID fornecido",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "204",
+                            description = "Item da estante excluído com sucesso"
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Item da estante não encontrado"
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "ID fornecido é inválido"
+                    ),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "Erro interno do servidor"
+                    )
+            }
+    )
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
         itemEstanteService.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping(value = "/mover/{idItem}/leitor/{idLeitor}/nova-estante/{idNovaEstante}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(
+            summary = "Mover item para outra estante",
+            description = "Move um item da estante para outra estante do mesmo leitor",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Item movido para outra estante com sucesso"
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Item da estante ou nova estante não encontrado"
+                    ),
+            }
+    )
+    public ResponseEntity<Void> moverParaOutraEstante(@PathVariable Long idItem, @PathVariable Long idLeitor, @PathVariable Long idNovaEstante) {
+        itemEstanteService.moverParaOutraEstante(idItem, idLeitor, idNovaEstante);
+        return ResponseEntity.ok().build();
     }
 }
