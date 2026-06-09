@@ -103,4 +103,52 @@ public class LivroController {
         livroService.delete(googleId);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping(value = "/{googleId}/media-avaliacoes", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(
+            summary = "Calcular média de avaliações",
+            description = "Calcula a média das avaliações para um livro específico com base no Google ID fornecido",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Média calculada com sucesso"
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Livro não encontrado"
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "Google ID fornecido é inválido"
+                    )
+            }
+    )
+    public ResponseEntity<Double> calcularMediaAvaliacoes(@PathVariable String googleId) {
+        Double media = livroService.calcularMediaAvaliacoes(googleId);
+        return ResponseEntity.ok(media);
+    }
+
+    @GetMapping(value = "/{googleId}/ficha-tecnica-completa", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(
+            summary = "Exibir ficha técnica completa",
+            description = "Exibe a ficha técnica completa de um livro específico com base no Google ID fornecido",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Ficha técnica exibida com sucesso"
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Livro não encontrado"
+                    ),
+            @ApiResponse(
+                            responseCode = "400",
+                            description = "Google ID fornecido é inválido"
+                    ),
+            }
+    )
+    public ResponseEntity<String> exibirFichaTecnicaCompleta(@PathVariable String googleId) {
+        String fichaTecnica = livroService.exibirFichaTecnicaCompleta(googleId);
+        return ResponseEntity.ok(fichaTecnica);
+    }
 }

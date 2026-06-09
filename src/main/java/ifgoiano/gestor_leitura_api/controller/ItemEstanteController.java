@@ -21,7 +21,7 @@ public class ItemEstanteController {
 
     private final ItemEstanteService itemEstanteService;
 
-    public ItemEstanteController(ItemEstanteService itemEstanteService){
+    public ItemEstanteController(ItemEstanteService itemEstanteService) {
         this.itemEstanteService = itemEstanteService;
     }
 
@@ -48,9 +48,10 @@ public class ItemEstanteController {
                     )
             }
     )
-    public ResponseEntity<ItemEstanteResponseDTO> findById(@PathVariable Long id){
+    public ResponseEntity<ItemEstanteResponseDTO> findById(@PathVariable Long id) {
         return ResponseEntity.ok(itemEstanteService.findById(id));
     }
+
     @GetMapping(value = "/estante/{estanteId}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(
             summary = "Buscar itens da estante por ID da estante",
@@ -74,11 +75,11 @@ public class ItemEstanteController {
                     )
             }
     )
-    public ResponseEntity<List<ItemEstanteResponseDTO>> findAllByEstanteId(@PathVariable Long estanteId){
+    public ResponseEntity<List<ItemEstanteResponseDTO>> findAllByEstanteId(@PathVariable Long estanteId) {
         return ResponseEntity.ok(itemEstanteService.findAllByEstanteId(estanteId));
     }
 
-    @PutMapping(value = "/{id}",produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(
             summary = "Atualizar item da estante",
             description = "Atualiza os detalhes do item da estante com base no ID fornecido",
@@ -101,7 +102,7 @@ public class ItemEstanteController {
                     )
             }
     )
-    public ResponseEntity<ItemEstanteResponseDTO> update(@RequestBody ItemEstanteRequestDTO dto, @PathVariable Long id){
+    public ResponseEntity<ItemEstanteResponseDTO> update(@RequestBody ItemEstanteRequestDTO dto, @PathVariable Long id) {
         return ResponseEntity.ok(itemEstanteService.upadate(id, dto));
     }
 
@@ -128,8 +129,28 @@ public class ItemEstanteController {
                     )
             }
     )
-    public ResponseEntity<Void> delete(@PathVariable Long id){
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
         itemEstanteService.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping(value = "/mover/{idItem}/leitor/{idLeitor}/nova-estante/{idNovaEstante}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(
+            summary = "Mover item para outra estante",
+            description = "Move um item da estante para outra estante do mesmo leitor",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Item movido para outra estante com sucesso"
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Item da estante ou nova estante não encontrado"
+                    ),
+            }
+    )
+    public ResponseEntity<Void> moverParaOutraEstante(@PathVariable Long idItem, @PathVariable Long idLeitor, @PathVariable Long idNovaEstante) {
+        itemEstanteService.moverParaOutraEstante(idItem, idLeitor, idNovaEstante);
+        return ResponseEntity.ok().build();
     }
 }
