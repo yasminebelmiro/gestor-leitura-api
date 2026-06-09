@@ -163,4 +163,31 @@ public class RegistroLeituraController {
             return ResponseEntity.noContent().build();
         }
 
+        @PutMapping(value = "/{itemId}/{registroId}/progresso", produces = MediaType.APPLICATION_JSON_VALUE)
+        @Operation(
+                summary = "Atualizar progresso de leitura",
+                description = "Atualiza o progresso de leitura de um registro específico, permitindo que o usuário informe a página atual e um comentário sobre o progresso",
+                responses = {
+                        @ApiResponse(
+                                responseCode = "200",
+                                description = "Progresso de leitura atualizado com sucesso"
+                        ),
+                        @ApiResponse(
+                                responseCode = "404",
+                                description = "Registro de leitura ou item não encontrado para os IDs fornecidos"
+                        ),
+                        @ApiResponse(
+                                responseCode = "400",
+                                description = "Dados fornecidos são inválidos"
+                        ),
+                        @ApiResponse(
+                                responseCode = "500",
+                                description = "Erro interno do servidor"
+                        )
+                }
+        )
+        public ResponseEntity<Void> atualizarProgresso(@PathVariable Long itemId, @PathVariable Long registroId, @RequestParam int pagina, @RequestParam String comentario) {
+            registroLeituraService.atualizarProgresso(itemId, registroId, pagina, comentario);
+            return ResponseEntity.ok().build();
+        }
 }

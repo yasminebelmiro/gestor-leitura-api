@@ -166,4 +166,109 @@ public class MetaAtualController {
         metaAtualService.delete(id);
         return ResponseEntity.noContent().build();
     }
+    @PutMapping(value = "/{ano}/progresso/{livrosLidos}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(
+            summary = "Atualizar progresso da meta anual atual",
+            description = "Atualiza o progresso da meta anual atual com base no ano e na quantidade de livros lidos fornecidos",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "204",
+                            description = "Progresso da meta anual atual atualizado com sucesso"
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Meta anual atual não encontrada para o ano fornecido"
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "Ano ou quantidade de livros lidos fornecidos são inválidos"
+                    ),
+                     @ApiResponse(
+                             responseCode = "403",
+                             description = "Acesso negado para atualizar o progresso da meta anual atual"
+                     ),
+                     @ApiResponse(
+                             responseCode = "401",
+                             description = "Usuário não autenticado para atualizar o progresso da meta anual atual"
+                     ),
+                     @ApiResponse(
+                             responseCode = "500",
+                             description = "Erro interno do servidor"
+                     )
+            }
+    )
+    public ResponseEntity<Void> atualizarProgresso(@PathVariable int ano, @PathVariable int livrosLidos) {
+        metaAtualService.atualizarProgresso(ano, livrosLidos);
+        return ResponseEntity.noContent().build();
+    }
+    @GetMapping(value = "/{ano}/meta-batida", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(
+            summary = "Verificar se a meta anual atual foi batida",
+            description = "Verifica se a meta anual atual foi batida com base no ano fornecido",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Verificação realizada com sucesso"
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Meta anual atual não encontrada para o ano fornecido"
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "Ano fornecido é inválido"
+                    ),
+                     @ApiResponse(
+                             responseCode = "403",
+                             description = "Acesso negado para verificar se a meta anual atual foi batida"
+                     ),
+                     @ApiResponse(
+                             responseCode = "401",
+                             description = "Usuário não autenticado para verificar se a meta anual atual foi batida"
+                     ),
+                     @ApiResponse(
+                             responseCode = "500",
+                             description = "Erro interno do servidor"
+                     )
+            }
+    )
+    public ResponseEntity<Boolean> verificaSeMetaFoiBatida(@PathVariable int ano) {
+        boolean metaBatida = metaAtualService.verificaSeMetaFoiBatida(ano);
+        return ResponseEntity.ok(metaBatida);
+    }
+    @GetMapping(value = "/{ano}/percentual-conclusao", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(
+            summary = "Obter percentual de conclusão da meta anual atual",
+            description = "Retorna o percentual de conclusão da meta anual atual com base no ano fornecido",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Percentual de conclusão obtido com sucesso"
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Meta anual atual não encontrada para o ano fornecido"
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "Ano fornecido é inválido"
+                    ),
+                     @ApiResponse(
+                             responseCode = "403",
+                             description = "Acesso negado para obter o percentual de conclusão da meta anual atual"
+                     ),
+                     @ApiResponse(
+                             responseCode = "401",
+                             description = "Usuário não autenticado para obter o percentual de conclusão da meta anual atual"
+                     ),
+                     @ApiResponse(
+                             responseCode = "500",
+                             description = "Erro interno do servidor"
+                     )
+            }
+    )
+    public ResponseEntity<Double> percentualConclusao(@PathVariable int ano){
+        double percentual = metaAtualService.percentualConclusao(ano);
+        return ResponseEntity.ok(percentual);
+    }
 }
