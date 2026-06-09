@@ -109,10 +109,6 @@ public class ItemEstante implements Serializable {
         atualizarStatus(StatusLeitura.LIDO, LocalDate.now());
     }
 
-    public void marcarComoLido(LocalDate dataConclusao) {
-        atualizarStatus(StatusLeitura.LIDO, dataConclusao);
-    }
-
     public void marcarComoQueroLer() {
         atualizarStatus(StatusLeitura.QUERO_LER, LocalDate.now());
     }

@@ -1,5 +1,6 @@
-package ifgoiano.gestor_leitura_api.service;
+ package ifgoiano.gestor_leitura_api.service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -7,13 +8,16 @@ import org.springframework.stereotype.Service;
 
 import ifgoiano.gestor_leitura_api.dto.request.ItemEstanteRequestDTO;
 import ifgoiano.gestor_leitura_api.dto.response.ItemEstanteResponseDTO;
+import ifgoiano.gestor_leitura_api.dto.response.RegistroLeituraResponseDTO;
 import ifgoiano.gestor_leitura_api.exceptions.EstanteNotFoundException;
 import ifgoiano.gestor_leitura_api.mapper.ItemEstanteMapper;
+import ifgoiano.gestor_leitura_api.mapper.RegistroLeituraMapper;
 import ifgoiano.gestor_leitura_api.model.Estante;
 import ifgoiano.gestor_leitura_api.model.ItemEstante;
+import ifgoiano.gestor_leitura_api.model.RegistroLeitura;
 import ifgoiano.gestor_leitura_api.repository.EstanteRepository;
 import ifgoiano.gestor_leitura_api.repository.ItemEstanteRepository;
-import jakarta.persistence.EntityNotFoundException;
+
 import jakarta.transaction.Transactional;
 
 @Service
@@ -22,10 +26,13 @@ public class ItemEstanteService {
     private final ItemEstanteRepository itemEstanteRepository;
     private final EstanteRepository estanteRepository;
     private final ItemEstanteMapper mapper;
+    private final RegistroLeituraMapper leituraMapper;
 
-    public ItemEstanteService(EstanteRepository estanteRepository, ItemEstanteRepository itemEstanteRepository, ItemEstanteMapper mapper) {
+    public ItemEstanteService(EstanteRepository estanteRepository, ItemEstanteRepository itemEstanteRepository,
+            RegistroLeituraMapper leituraMapper, ItemEstanteMapper mapper) {
         this.estanteRepository = estanteRepository;
         this.itemEstanteRepository = itemEstanteRepository;
+        this.leituraMapper = leituraMapper;
         this.mapper = mapper;
     }
 
@@ -63,14 +70,14 @@ public class ItemEstanteService {
         itemEstanteRepository.delete(existing);
     }
 
-    @Transactional 
-    public void moverParaOutraEstante(Long idItem, Long idLeitor, Long idNovaEstante) {
-        logger.info(() -> "Movendo item " + idItem + " para a estante " + idNovaEstante);
-      
-        ItemEstante item = itemEstanteRepository.findByIdOrThrow(idItem);
+    @Transactional
+    public ItemEstanteResponseDTO moverParaOutraEstante(Long idItemEstante, Long idLeitor, Long idNovaEstante) {
+        logger.info(() -> "Movendo item " + idItemEstante + " para a estante " + idNovaEstante);
+
+        ItemEstante item = itemEstanteRepository.findByIdOrThrow(idItemEstante);
 
         if (!item.getEstante().getLeitor().getId().equals(idLeitor)) {
-             throw new SecurityException("Este item não pertence ao seu usuário.");
+            throw new SecurityException("Este item não pertence ao seu usuário.");
         }
 
         Estante novaEstante = estanteRepository.findByIdAndLeitorId(idNovaEstante, idLeitor);
@@ -79,6 +86,63 @@ public class ItemEstanteService {
         }
 
         item.moverParaOutraEstante(novaEstante);
+        ItemEstante salvo = itemEstanteRepository.save(item);
+        return mapper.toResponse(salvo);
+    }
+
+    @Transactional
+    public void marcarComoAbandonado(Long id) {
+        logger.info(() -> "Atualizando o item " + id + "como abandondo");
+        ItemEstante item = itemEstanteRepository.findByIdOrThrow(id);
+        item.marcarComoAbandonado();
         itemEstanteRepository.save(item);
+
+    }
+
+    @Transactional
+    public void marcarComoLido(Long id) {
+        logger.info(() -> "Atualizando o item " + id + "como lido");
+        ItemEstante item = itemEstanteRepository.findByIdOrThrow(id);
+        item.marcarComoLido();
+        itemEstanteRepository.save(item);
+
+    }
+
+    @Transactional
+    public void marcarComoQueroLer(Long id) {
+        logger.info(() -> "Atualizando o item " + id + "como quero ler");
+        ItemEstante item = itemEstanteRepository.findByIdOrThrow(id);
+        item.marcarComoQueroLer();
+        itemEstanteRepository.save(item);
+    }
+
+    @Transactional
+    public void marcarComoLendo(Long id) {
+        logger.info(() -> "Atualizando o item " + id + "como lendo");
+        ItemEstante item = itemEstanteRepository.findByIdOrThrow(id);
+        item.marcarComoLendo();
+        itemEstanteRepository.save(item);
+    }
+
+    @Transactional
+    public RegistroLeituraResponseDTO adicionarRegistroLeitura(Long idItemEstante, LocalDate data, int paginaAtual,
+            String comentario) {
+        logger.info(() -> "Criando registro de leituta");
+        ItemEstante item = itemEstanteRepository.findByIdOrThrow(idItemEstante);
+        RegistroLeitura registro = item.adicionarRegistroLeitura(data, paginaAtual, comentario);
+        itemEstanteRepository.save(item);
+        return leituraMapper.toResponse(registro);
+    }
+
+    public int calcularDiasDeLeitura(Long id) {
+        logger.info(() -> "Calculando dias de leitura");
+        ItemEstante item = itemEstanteRepository.findByIdOrThrow(id);
+        return item.calcularDiasDeLeitura();
+    }
+
+    public int buscarPaginaAtual(Long id) {
+        logger.info(() -> "Buscando página atual da leitura");
+        ItemEstante item = itemEstanteRepository.findByIdOrThrow(id);
+        return item.getPaginaAtualConsiderada();
     }
 }

@@ -3,6 +3,7 @@ package ifgoiano.gestor_leitura_api.service;
 import java.util.List;
 import java.util.logging.Logger;
 
+import org.springframework.data.jpa.repository.Meta;
 import org.springframework.stereotype.Service;
 
 import ifgoiano.gestor_leitura_api.dto.request.MetaAnualRequestDTO;
@@ -35,7 +36,6 @@ public class MetaAtualService {
         return mapper.toResponse(existing);
     }
 
-
     public List<MetaAnualResponseDTO> listByLeitor(Long id) {
         logger.info("Listando meta por id do leitor " + id);
         List<MetaAnual> metas = repository.findByLeitorId(id);
@@ -44,12 +44,13 @@ public class MetaAtualService {
 
     public MetaAnualResponseDTO create(MetaAnualRequestDTO dto) {
         logger.info("Criando MetaAnual do ano de " + dto.ano());
+        
         Leitor leitor = leitorRepository.findByIdOrThrow(dto.leitorId());
-        MetaAnual novo = mapper.toEntity(dto);
-        novo.setLeitor(leitor);
+        MetaAnual novo = MetaAnual.criarParaAnoAtual(leitor, dto.quantidadeAlvo());
+
         leitor.adicionarMeta(novo);
         MetaAnual salvo = repository.save(novo);
-        
+
         return mapper.toResponse(salvo);
     }
 
@@ -66,6 +67,21 @@ public class MetaAtualService {
         logger.info("Deetando meta " + id);
         MetaAnual existing = repository.findByIdOrThrow(id);
         repository.delete(existing);
+    }
+
+    public void atualizarProgresso(int ano, int livrosLidos) {
+        MetaAnual meta = repository.findByAno(ano);
+        meta.atualizarProgresso(livrosLidos);
+    }
+
+    public boolean verificaSeMetaFoiBatida(int ano) {
+        MetaAnual meta = repository.findByAno(ano);
+        return meta.metaBatida();
+    }
+
+    public double percentualConclusao(int ano) {
+        MetaAnual meta = repository.findByAno(ano);
+        return meta.percentualConclusao();
     }
 
 }
