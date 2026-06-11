@@ -13,9 +13,14 @@ import ifgoiano.gestor_leitura_api.model.ItemEstante;
 public interface ItemEstanteMapper {
     ItemEstanteResponseDTO toResponse(ItemEstante item);
 
+    
     List<ItemEstanteResponseDTO> toResponseList(List<ItemEstante> item);
 
     @Mapping(target="id", ignore=true)
+    @Mapping(target = "estante", ignore = true)
+    @Mapping(target = "registros", ignore = true)
+    @Mapping(target = "dataConclusao", ignore = true)
+    @Mapping(target = "livro", ignore = true)
     ItemEstante toEntity(ItemEstanteRequestDTO dto);
 
 }

@@ -2,20 +2,22 @@ package ifgoiano.gestor_leitura_api.controller;
 
 import java.util.List;
 
-import ifgoiano.gestor_leitura_api.model.Livro;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import ifgoiano.gestor_leitura_api.dto.response.LivroResponseDTO;
+import ifgoiano.gestor_leitura_api.service.GoogleBooksIntegrationService;
 import ifgoiano.gestor_leitura_api.service.LivroService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-
-import ifgoiano.gestor_leitura_api.dto.response.LivroResponseDTO;
-import ifgoiano.gestor_leitura_api.service.GoogleBooksIntegrationService;
-
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
 
 
 @RestController
@@ -54,30 +56,6 @@ public class LivroController {
     public ResponseEntity<List<LivroResponseDTO>> buscar(@RequestParam String q) {
         List<LivroResponseDTO> result = googleBooksService.buscarLivros(q);
         return ResponseEntity.ok(result);
-    }
-
-    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(
-            summary = "Criar livro",
-            description = "Adiciona um novo livro à coleção com base nos dados fornecidos",
-            responses = {
-                    @ApiResponse(
-                            responseCode = "201",
-                            description = "Livro criado com sucesso"
-                    ),
-                    @ApiResponse(
-                            responseCode = "400",
-                            description = "Dados de entrada inválidos"
-                    ),
-                    @ApiResponse(
-                            responseCode = "500",
-                            description = "Erro interno do servidor"
-                    )
-            }
-    )
-    public ResponseEntity<Livro> create(@RequestBody LivroResponseDTO dto) {
-        Livro novo = livroService.create(dto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(novo);
     }
 
     @DeleteMapping(value = "/{googleId}", produces = MediaType.APPLICATION_JSON_VALUE)

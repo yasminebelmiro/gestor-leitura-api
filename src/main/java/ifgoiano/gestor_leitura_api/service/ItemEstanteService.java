@@ -14,7 +14,9 @@ import ifgoiano.gestor_leitura_api.mapper.ItemEstanteMapper;
 import ifgoiano.gestor_leitura_api.mapper.RegistroLeituraMapper;
 import ifgoiano.gestor_leitura_api.model.Estante;
 import ifgoiano.gestor_leitura_api.model.ItemEstante;
+import ifgoiano.gestor_leitura_api.model.Livro;
 import ifgoiano.gestor_leitura_api.model.RegistroLeitura;
+import ifgoiano.gestor_leitura_api.model.StatusLeitura;
 import ifgoiano.gestor_leitura_api.repository.EstanteRepository;
 import ifgoiano.gestor_leitura_api.repository.ItemEstanteRepository;
 
@@ -27,13 +29,15 @@ public class ItemEstanteService {
     private final EstanteRepository estanteRepository;
     private final ItemEstanteMapper mapper;
     private final RegistroLeituraMapper leituraMapper;
+    private final LivroService livroService;
 
     public ItemEstanteService(EstanteRepository estanteRepository, ItemEstanteRepository itemEstanteRepository,
-            RegistroLeituraMapper leituraMapper, ItemEstanteMapper mapper) {
+            RegistroLeituraMapper leituraMapper, ItemEstanteMapper mapper, LivroService livroService) {
         this.estanteRepository = estanteRepository;
         this.itemEstanteRepository = itemEstanteRepository;
         this.leituraMapper = leituraMapper;
         this.mapper = mapper;
+        this.livroService = livroService;
     }
 
     public ItemEstanteResponseDTO findById(Long id) {
@@ -49,8 +53,16 @@ public class ItemEstanteService {
     }
 
     public ItemEstanteResponseDTO create(ItemEstanteRequestDTO dto) {
-        logger.info(() -> "Add livro: " + dto.livro() + " a estante");
-        ItemEstante novo = mapper.toEntity(dto);
+        logger.info(() -> "Add livro: " + dto.livro().titulo() + " a estante");
+        Livro livro = livroService.create(dto.livro());
+        Estante estante = estanteRepository.findById(dto.estanteId())
+                .orElseThrow(() -> new EstanteNotFoundException("Estante não encontrada"));
+        if(itemEstanteRepository.existsByEstanteIdAndLivroId(estante.getId(), livro.getId()));
+        ItemEstante novo = new ItemEstante();
+        novo.setEstante(estante);
+        novo.setLivro(livro);
+        novo.setStatus(dto.status() != null ? dto.status() : StatusLeitura.LENDO);
+        
         ItemEstante salvo = itemEstanteRepository.save(novo);
         return mapper.toResponse(salvo);
 
