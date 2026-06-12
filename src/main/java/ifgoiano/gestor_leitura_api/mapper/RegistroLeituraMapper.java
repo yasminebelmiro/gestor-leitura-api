@@ -11,9 +11,12 @@ import ifgoiano.gestor_leitura_api.model.RegistroLeitura;
 
 @Mapper(componentModel="spring")
 public interface RegistroLeituraMapper {
+
+    @Mapping(target="livro", source="item.livro.titulo" )
     RegistroLeituraResponseDTO toResponse(RegistroLeitura registro);
     List<RegistroLeituraResponseDTO> tResponseList(List<RegistroLeitura> registros);
 
     @Mapping(target="id", ignore=true)
+    @Mapping(target="item.id", source="idItemEstante")
     RegistroLeitura toEntity(RegistroLeituraRequestDTO dto);
 }

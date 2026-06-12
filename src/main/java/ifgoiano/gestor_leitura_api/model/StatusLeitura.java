@@ -1,8 +1,8 @@
 package ifgoiano.gestor_leitura_api.model;
 
 public enum StatusLeitura {
-    LENDO("Lendo"),
     QUERO_LER("Quero Ler"),
+    LENDO("Lendo"),
     LIDO("Lido"),
     ABANDONADO("Abandonado");
 

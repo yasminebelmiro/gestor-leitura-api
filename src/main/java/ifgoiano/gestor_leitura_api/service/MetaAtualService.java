@@ -44,7 +44,7 @@ public class MetaAtualService {
 
     public MetaAnualResponseDTO create(MetaAnualRequestDTO dto) {
         logger.info("Criando MetaAnual do ano de " + dto.ano());
-        
+
         Leitor leitor = leitorRepository.findByIdOrThrow(dto.leitorId());
         MetaAnual novo = MetaAnual.criarParaAnoAtual(leitor, dto.quantidadeAlvo());
 
@@ -67,6 +67,11 @@ public class MetaAtualService {
         logger.info("Deetando meta " + id);
         MetaAnual existing = repository.findByIdOrThrow(id);
         repository.delete(existing);
+    }
+
+    public void incrementarProgresso(int ano) {
+        MetaAnual meta = repository.findByAno(ano);
+        meta.incrementarProgresso();
     }
 
     public void atualizarProgresso(int ano, int livrosLidos) {

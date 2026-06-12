@@ -263,33 +263,33 @@ public class ItemEstanteController {
         itemEstanteService.marcarComoLendo(id);
         return ResponseEntity.ok().build();
     }
-    @PutMapping(value = "/adicionar-registro-leitura/{idItemEstante}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(
-            summary = "Adicionar registro de leitura",
-            description = "Adiciona um registro de leitura para um item da estante com base no ID fornecido",
-            responses = {
-                    @ApiResponse(
-                            responseCode = "200",
-                            description = "Registro de leitura adicionado com sucesso"
-                    ),
-                    @ApiResponse(
-                            responseCode = "404",
-                            description = "Item da estante não encontrado"
-                    ),
-                    @ApiResponse(
-                            responseCode = "400",
-                            description = "ID fornecido é inválido ou dados do registro de leitura são inválidos"
-                    ),
-                    @ApiResponse(
-                            responseCode = "500",
-                            description = "Erro interno do servidor"
-                    )
-            }
-    )
-    public ResponseEntity<RegistroLeituraResponseDTO> adicionarRegistroLeitura(@PathVariable Long idItemEstante, @RequestParam LocalDate data, @RequestParam int paginaAtual, @RequestParam String cometario) {
-        RegistroLeituraResponseDTO response = itemEstanteService.adicionarRegistroLeitura(idItemEstante,data, paginaAtual, cometario);
-        return ResponseEntity.ok(response);
-    }
+//     @PutMapping(value = "/adicionar-registro-leitura/{idItemEstante}", produces = MediaType.APPLICATION_JSON_VALUE)
+//     @Operation(
+//             summary = "Adicionar registro de leitura",
+//             description = "Adiciona um registro de leitura para um item da estante com base no ID fornecido",
+//             responses = {
+//                     @ApiResponse(
+//                             responseCode = "200",
+//                             description = "Registro de leitura adicionado com sucesso"
+//                     ),
+//                     @ApiResponse(
+//                             responseCode = "404",
+//                             description = "Item da estante não encontrado"
+//                     ),
+//                     @ApiResponse(
+//                             responseCode = "400",
+//                             description = "ID fornecido é inválido ou dados do registro de leitura são inválidos"
+//                     ),
+//                     @ApiResponse(
+//                             responseCode = "500",
+//                             description = "Erro interno do servidor"
+//                     )
+//             }
+//     )
+//     public ResponseEntity<RegistroLeituraResponseDTO> adicionarRegistroLeitura(@PathVariable Long idItemEstante, @RequestParam LocalDate data, @RequestParam int paginaAtual, @RequestParam String cometario) {
+//         RegistroLeituraResponseDTO response = itemEstanteService.adicionarRegistroLeitura(idItemEstante,data, paginaAtual, cometario);
+//         return ResponseEntity.ok(response);
+//     }
     @GetMapping(value = "/calcular-dias-leitura/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(
             summary = "Calcular dias de leitura",

@@ -15,8 +15,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.lang.reflect.Array;
-
 @RestController
 @RequestMapping("/api/leitor")
 @Validated
@@ -29,59 +27,32 @@ public class LeitorController {
         this.leitorService = leitorService;
     }
 
-    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(
-            summary = "Buscar leitor por ID",
-            description = "Retorna os detalhes do leitor com base no ID fornecido",
-            responses = {
-                    @ApiResponse(
-                            responseCode = "200",
-                            description = "Leitor encontrado com sucesso"
-                    ),
-                    @ApiResponse(
-                            responseCode = "404",
-                            description = "Leitor não encontrado"
-                    ),
-                    @ApiResponse(
-                            responseCode = "400",
-                            description = "ID fornecido é inválido"
-                    ),
-                    @ApiResponse(
-                            responseCode = "500",
-                            description = "Erro interno do servidor"
-                    )
-            }
-    )
-    public ResponseEntity<LeitorResponseDTO> findById(@PathVariable Long id){
-        return ResponseEntity.ok(leitorService.findById(id));
-    }
-
-    @GetMapping(value = "/email/{email}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(
-            summary = "Buscar leitor por email",
-            description = "Retorna os detalhes do leitor com base no email fornecido",
-            responses = {
-                    @ApiResponse(
-                            responseCode = "200",
-                            description = "Leitor encontrado com sucesso"
-                    ),
-                    @ApiResponse(
-                            responseCode = "404",
-                            description = "Leitor não encontrado"
-                    ),
-                    @ApiResponse(
-                            responseCode = "400",
-                            description = "Email fornecido é inválido"
-                    ),
-                    @ApiResponse(
-                            responseCode = "500",
-                            description = "Erro interno do servidor"
-                    )
-            }
-    )
-    public ResponseEntity<LeitorResponseDTO> findByEmail(@PathVariable String email) {
-        return ResponseEntity.ok(leitorService.findByEmail(email));
-    }
+//     @GetMapping(value = "/email/{email}", produces = MediaType.APPLICATION_JSON_VALUE)
+//     @Operation(
+//             summary = "Buscar leitor por email",
+//             description = "Retorna os detalhes do leitor com base no email fornecido",
+//             responses = {
+//                     @ApiResponse(
+//                             responseCode = "200",
+//                             description = "Leitor encontrado com sucesso"
+//                     ),
+//                     @ApiResponse(
+//                             responseCode = "404",
+//                             description = "Leitor não encontrado"
+//                     ),
+//                     @ApiResponse(
+//                             responseCode = "400",
+//                             description = "Email fornecido é inválido"
+//                     ),
+//                     @ApiResponse(
+//                             responseCode = "500",
+//                             description = "Erro interno do servidor"
+//                     )
+//             }
+//     )
+//     public ResponseEntity<LeitorResponseDTO> findByEmail(@PathVariable String email) {
+//         return ResponseEntity.ok(leitorService.findByEmail(email));
+//     }
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(

@@ -1,19 +1,24 @@
 package ifgoiano.gestor_leitura_api.model;
 
-import jakarta.persistence.*;
+import java.io.Serializable;
+import java.time.LocalDate;
+import java.util.Objects;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
-import java.io.Serializable;
-import java.time.LocalDate;
-import java.util.Date;
-import java.util.Objects;
-
 @Entity
 @Table(
-        name = "registro_leitura",
-        uniqueConstraints = @UniqueConstraint(name = "uk_registro_item_data", columnNames = {"item_id", "data"})
+        name = "registro_leitura"
 )
 public class RegistroLeitura implements Serializable {
 
@@ -51,8 +56,7 @@ public class RegistroLeitura implements Serializable {
     public RegistroLeitura() {
 
     }
-
-    public void atualizarProgresso(int pagina, String comentario) {
+public void atualizarProgresso(int pagina, String comentario) {
         if (item == null || item.getLivro() == null) {
             throw new IllegalArgumentException("O registro deve estar vinculado a um item com livro.");
         }
@@ -66,9 +70,6 @@ public class RegistroLeitura implements Serializable {
         this.paginaAtual = pagina;
         this.comentarios = comentario;
     }
-
-
-
     @Override
     public int hashCode() {
         int hash = 7;

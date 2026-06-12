@@ -2,6 +2,7 @@
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Logger;
 
 import org.springframework.stereotype.Service;
@@ -19,7 +20,7 @@ import ifgoiano.gestor_leitura_api.model.RegistroLeitura;
 import ifgoiano.gestor_leitura_api.model.StatusLeitura;
 import ifgoiano.gestor_leitura_api.repository.EstanteRepository;
 import ifgoiano.gestor_leitura_api.repository.ItemEstanteRepository;
-
+import ifgoiano.gestor_leitura_api.repository.LivroRepository;
 import jakarta.transaction.Transactional;
 
 @Service
@@ -30,19 +31,25 @@ public class ItemEstanteService {
     private final ItemEstanteMapper mapper;
     private final RegistroLeituraMapper leituraMapper;
     private final LivroService livroService;
+    private final LivroRepository livroRepository;
 
-    public ItemEstanteService(EstanteRepository estanteRepository, ItemEstanteRepository itemEstanteRepository,
-            RegistroLeituraMapper leituraMapper, ItemEstanteMapper mapper, LivroService livroService) {
-        this.estanteRepository = estanteRepository;
+
+    public ItemEstanteService(ItemEstanteRepository itemEstanteRepository, EstanteRepository estanteRepository,
+            ItemEstanteMapper mapper, RegistroLeituraMapper leituraMapper, LivroService livroService,
+            LivroRepository livroRepository) {
         this.itemEstanteRepository = itemEstanteRepository;
-        this.leituraMapper = leituraMapper;
+        this.estanteRepository = estanteRepository;
         this.mapper = mapper;
+        this.leituraMapper = leituraMapper;
         this.livroService = livroService;
+        this.livroRepository = livroRepository;
     }
 
     public ItemEstanteResponseDTO findById(Long id) {
         logger.info(() -> "Buscando item de id: " + id);
         ItemEstante item = itemEstanteRepository.findByIdOrThrow(id);
+        item.setEstante(item.getEstante());
+        item.setLivro(item.getLivro());
         return mapper.toResponse(item);
     }
 
@@ -61,7 +68,7 @@ public class ItemEstanteService {
         ItemEstante novo = new ItemEstante();
         novo.setEstante(estante);
         novo.setLivro(livro);
-        novo.setStatus(dto.status() != null ? dto.status() : StatusLeitura.LENDO);
+        novo.setStatus(dto.status() != null ? dto.status() : StatusLeitura.QUERO_LER);
         
         ItemEstante salvo = itemEstanteRepository.save(novo);
         return mapper.toResponse(salvo);
@@ -79,6 +86,8 @@ public class ItemEstanteService {
 
     public void delete(Long id) {
         ItemEstante existing = itemEstanteRepository.findByIdOrThrow(id);
+        String googleId = existing.getLivro().getGoogleVolumeId();
+        livroService.delete(googleId);
         itemEstanteRepository.delete(existing);
     }
 
@@ -134,16 +143,6 @@ public class ItemEstanteService {
         ItemEstante item = itemEstanteRepository.findByIdOrThrow(id);
         item.marcarComoLendo();
         itemEstanteRepository.save(item);
-    }
-
-    @Transactional
-    public RegistroLeituraResponseDTO adicionarRegistroLeitura(Long idItemEstante, LocalDate data, int paginaAtual,
-            String comentario) {
-        logger.info(() -> "Criando registro de leituta");
-        ItemEstante item = itemEstanteRepository.findByIdOrThrow(idItemEstante);
-        RegistroLeitura registro = item.adicionarRegistroLeitura(data, paginaAtual, comentario);
-        itemEstanteRepository.save(item);
-        return leituraMapper.toResponse(registro);
     }
 
     public int calcularDiasDeLeitura(Long id) {
