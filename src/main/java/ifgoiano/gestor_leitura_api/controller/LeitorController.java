@@ -1,5 +1,6 @@
 package ifgoiano.gestor_leitura_api.controller;
 
+import ifgoiano.gestor_leitura_api.assembler.LeitorModelAssembler;
 import ifgoiano.gestor_leitura_api.dto.request.LeitorRequestDTO;
 import ifgoiano.gestor_leitura_api.dto.response.LeitorResponseDTO;
 import ifgoiano.gestor_leitura_api.dto.response.MetaAnualResponseDTO;
@@ -9,6 +10,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -22,12 +24,14 @@ import org.springframework.web.bind.annotation.*;
 public class LeitorController {
 
     private final LeitorService leitorService;
+    private final LeitorModelAssembler assembler;
 
-    public LeitorController(LeitorService leitorService) {
+    public LeitorController(LeitorService leitorService, LeitorModelAssembler assembler) {
         this.leitorService = leitorService;
+        this.assembler = assembler;
     }
 
-//     @GetMapping(value = "/email/{email}", produces = MediaType.APPLICATION_JSON_VALUE)
+    //     @GetMapping(value = "/email/{email}", produces = MediaType.APPLICATION_JSON_VALUE)
 //     @Operation(
 //             summary = "Buscar leitor por email",
 //             description = "Retorna os detalhes do leitor com base no email fornecido",
@@ -53,66 +57,62 @@ public class LeitorController {
 //     public ResponseEntity<LeitorResponseDTO> findByEmail(@PathVariable String email) {
 //         return ResponseEntity.ok(leitorService.findByEmail(email));
 //     }
+    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(
+            summary = "Buscar leitor por ID",
+            description = "Retorna os detalhes do leitor com base no ID fornecido",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Leitor encontrado com sucesso"),
+                    @ApiResponse(responseCode = "404", description = "Leitor não encontrado")
+            }
+    )
+    public ResponseEntity<EntityModel<LeitorResponseDTO>> findById(@PathVariable Long id) {
+        LeitorResponseDTO leitor = leitorService.findById(id);
+        return ResponseEntity.ok(assembler.toModel(leitor));
+    }
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(
             summary = "Criar um novo leitor",
             description = "Cria um novo leitor com os dados fornecidos no corpo da requisição",
             responses = {
-                    @ApiResponse(
-                            responseCode = "201",
-                            description = "Leitor criado com sucesso"
-                    ),
-                    @ApiResponse(
-                            responseCode = "400",
-                            description = "Dados de entrada inválidos",
-                            content = @Content(schema = @Schema(implementation = LeitorResponseDTO.class))
-                    )
+                    @ApiResponse(responseCode = "201", description = "Leitor criado com sucesso"),
+                    @ApiResponse(responseCode = "400", description = "Dados de entrada inválidos"),
             }
     )
-    public ResponseEntity<LeitorResponseDTO> create(@RequestBody LeitorRequestDTO dto) {
+    public ResponseEntity<EntityModel<LeitorResponseDTO>> create(@RequestBody LeitorRequestDTO dto) {
         LeitorResponseDTO novo = leitorService.create(dto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(novo);
+        return ResponseEntity.status(HttpStatus.CREATED).body(assembler.toModel(novo));
     }
 
-    @PutMapping(value = "/{id}",produces = MediaType.APPLICATION_JSON_VALUE)
-     @Operation(
+    @PutMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(
             summary = "Atualizar um leitor existente",
             description = "Atualiza os detalhes de um leitor existente com base no" +
                     " ID fornecido e nos dados do corpo da requisição",
             responses = {
-                    @ApiResponse(
-                            responseCode = "200",
-                            description = "Leitor atualizado com sucesso"
+                    @ApiResponse(responseCode = "200", description = "Leitor atualizado com sucesso"
                     ),
-                    @ApiResponse(
-                            responseCode = "400",
-                            description = "Dados de entrada inválidos"
+                    @ApiResponse(responseCode = "400", description = "Dados de entrada inválidos"
                     ),
-                    @ApiResponse(
-                            responseCode = "404",
-                            description = "Leitor não encontrado"
+                    @ApiResponse(responseCode = "404", description = "Leitor não encontrado"
                     )
             }
     )
-    public ResponseEntity<LeitorResponseDTO> update(
+    public ResponseEntity<EntityModel<LeitorResponseDTO>> update(
             @PathVariable Long id,
             @RequestBody LeitorRequestDTO dto) {
-        return ResponseEntity.ok(leitorService.update(id, dto));
+        return ResponseEntity.ok(assembler.toModel(leitorService.update(id, dto)));
     }
 
-    @DeleteMapping(value = "/{id}",produces = MediaType.APPLICATION_JSON_VALUE)
-     @Operation(
+    @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(
             summary = "Deletar um leitor",
             description = "Remove um leitor existente com base no ID fornecido",
             responses = {
-                    @ApiResponse(
-                            responseCode = "204",
-                            description = "Leitor deletado com sucesso"
+                    @ApiResponse(responseCode = "204", description = "Leitor deletado com sucesso"
                     ),
-                    @ApiResponse(
-                            responseCode = "404",
-                            description = "Leitor não encontrado"
+                    @ApiResponse(responseCode = "404", description = "Leitor não encontrado"
                     )
             }
     )
@@ -123,7 +123,7 @@ public class LeitorController {
     }
 
     @GetMapping(value = "/{id}/meta/{ano}", produces = MediaType.APPLICATION_JSON_VALUE)
-     @Operation(
+    @Operation(
             summary = "Buscar meta anual por ano",
             description = "Retorna a meta anual do leitor para o ano especificado",
             responses = {
@@ -142,11 +142,12 @@ public class LeitorController {
                     )
             }
     )
-    public ResponseEntity<MetaAnualResponseDTO> buscarMetaPorAno(@PathVariable Long id, @PathVariable int ano) {
+    public ResponseEntity<MetaAnualResponseDTO> buscarMetaPorAno(@PathVariable Long id, @PathVariable Integer ano) {
         return ResponseEntity.ok(leitorService.buscarMetaPorAno(id, ano));
     }
+
     @GetMapping(value = "/{id}/meta/{ano}/verificar", produces = MediaType.APPLICATION_JSON_VALUE)
-     @Operation(
+    @Operation(
             summary = "Verificar se meta anual foi batida",
             description = "Verifica se o leitor atingiu a meta anual para o ano especificado",
             responses = {
@@ -168,8 +169,9 @@ public class LeitorController {
     public ResponseEntity<Boolean> verificarMetaBatida(@PathVariable Long id, @PathVariable int ano) {
         return ResponseEntity.ok(leitorService.verificarMetaBatida(id, ano));
     }
+
     @GetMapping(value = "/{id}/progresso/{ano}", produces = MediaType.APPLICATION_JSON_VALUE)
-     @Operation(
+    @Operation(
             summary = "Calcular progresso geral do leitor",
             description = "Calcula o progresso geral do leitor em relação à meta anual para o ano especificado",
             responses = {
@@ -191,8 +193,9 @@ public class LeitorController {
     public ResponseEntity<Double> calcularProgressoGeral(@PathVariable Long id, @PathVariable int ano) {
         return ResponseEntity.ok(leitorService.calcularProgressoGeral(id, ano));
     }
+
     @GetMapping(value = "/{id}/livros-lidos/{ano}", produces = MediaType.APPLICATION_JSON_VALUE)
-     @Operation(
+    @Operation(
             summary = "Contar livros lidos no ano",
             description = "Retorna a quantidade de livros lidos pelo leitor no ano especificado",
             responses = {
@@ -214,8 +217,9 @@ public class LeitorController {
     public ResponseEntity<Long> contarLivrosLidosNoAno(@PathVariable Long id, @PathVariable int ano) {
         return ResponseEntity.ok(leitorService.contarLivrosLidosNoAno(id, ano));
     }
+
     @GetMapping(value = "/{id}/meta/{ano}/recalcular", produces = MediaType.APPLICATION_JSON_VALUE)
-     @Operation(
+    @Operation(
             summary = "Recalcular meta anual do ano",
             description = "Recalcula a meta anual do leitor para o ano especificado com base nos livros lidos e progresso atual",
             responses = {
