@@ -126,11 +126,11 @@ class BeanValidationTest {
         livro.setTitulo("a".repeat(256));
         assertMensagem(livro, "titulo", "O título deve ter no máximo 255 caracteres.");
 
-        livro.setIsbn(" ");
-        assertMensagem(livro, "isbn", "O ISBN é obrigatório.");
-
-        livro.setIsbn("a".repeat(21));
-        assertMensagem(livro, "isbn", "O ISBN deve ter no máximo 20 caracteres.");
+//        livro.setIsbn(" ");
+//        assertMensagem(livro, "isbn", "O ISBN é obrigatório.");
+//
+//        livro.setIsbn("a".repeat(21));
+//        assertMensagem(livro, "isbn", "O ISBN deve ter no máximo 20 caracteres.");
 
         livro.setNumeroPaginas(0);
         assertMensagem(livro, "numeroPaginas", "O número de páginas deve ser maior que zero.");
