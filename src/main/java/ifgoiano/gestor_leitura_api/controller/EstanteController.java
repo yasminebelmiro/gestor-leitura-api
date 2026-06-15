@@ -2,8 +2,11 @@ package ifgoiano.gestor_leitura_api.controller;
 
 import java.util.List;
 
+import ifgoiano.gestor_leitura_api.assembler.EstanteModelAssembler;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -29,9 +32,11 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 public class EstanteController {
 
     private EstanteService estanteService;
+    private final EstanteModelAssembler assembler;
 
-    public EstanteController(EstanteService estanteService) {
+    public EstanteController(EstanteService estanteService, EstanteModelAssembler assembler) {
         this.estanteService = estanteService;
+        this.assembler = assembler;
     }
 
     @GetMapping(value = "/{id}/leitor/{leitorId}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -39,26 +44,15 @@ public class EstanteController {
             summary = "Buscar estante por ID e ID do leitor",
             description = "Retorna os detalhes da estante com base no ID fornecido e no ID do leitor associado",
             responses = {
-                    @ApiResponse(
-                            responseCode = "200",
-                            description = "Estante encontrada com sucesso"
-                    ),
-                    @ApiResponse(
-                            responseCode = "404",
-                            description = "Estante ou leitor não encontrado"
-                    ),
-                    @ApiResponse(
-                            responseCode = "400",
-                            description = "ID fornecido é inválido"
-                    ),
-                    @ApiResponse(
-                            responseCode = "500",
-                            description = "Erro interno do servidor"
-                    )
+                    @ApiResponse(responseCode = "200", description = "Estante encontrada com sucesso"),
+                    @ApiResponse(responseCode = "404", description = "Estante ou leitor não encontrado"),
+                    @ApiResponse(responseCode = "400", description = "ID fornecido é inválido"),
+                    @ApiResponse(responseCode = "500",description = "Erro interno do servidor")
             }
     )
-    public ResponseEntity<EstanteResponseDTO> findByIdAndLeitorId(@PathVariable Long id, Long leitorId) {
-        return ResponseEntity.ok(estanteService.findByIdAndLeitorId(id, leitorId));
+    public ResponseEntity<EntityModel<EstanteResponseDTO>> findByIdAndLeitorId(@PathVariable Long id, @PathVariable Long leitorId) {
+        EstanteResponseDTO dto = estanteService.findByIdAndLeitorId(id, leitorId);
+        return ResponseEntity.ok(assembler.toModel(dto));
     }
 
     @GetMapping(value = "/leitor/{leitorId}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -66,26 +60,15 @@ public class EstanteController {
             summary = "Buscar todas as estantes por ID do leitor",
             description = "Retorna uma lista de estantes associadas ao ID do leitor fornecido",
             responses = {
-                    @ApiResponse(
-                            responseCode = "200",
-                            description = "Estantes encontradas com sucesso"
-                    ),
-                    @ApiResponse(
-                            responseCode = "404",
-                            description = "Leitor não encontrado"
-                    ),
-                    @ApiResponse(
-                            responseCode = "400",
-                            description = "ID do leitor fornecido é inválido"
-                    ),
-                    @ApiResponse(
-                            responseCode = "500",
-                            description = "Erro interno do servidor"
-                    )
+                    @ApiResponse(responseCode = "200", description = "Estantes encontradas com sucesso"),
+                    @ApiResponse(responseCode = "404", description = "Leitor não encontrado"),
+                    @ApiResponse(responseCode = "400", description = "ID do leitor fornecido é inválido"),
+                    @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
             }
     )
-    public ResponseEntity<List<EstanteResponseDTO>> findAllByLeitorId(@PathVariable Long leitorId) {
-        return ResponseEntity.ok(estanteService.findAllByLeitorId(leitorId));
+    public ResponseEntity<CollectionModel<EntityModel<EstanteResponseDTO>>> findAllByLeitorId(@PathVariable Long leitorId) {
+        List<EstanteResponseDTO> estantes = estanteService.findAllByLeitorId(leitorId);
+        return ResponseEntity.ok(assembler.toCollectionModel(estantes));
     }
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
@@ -93,49 +76,30 @@ public class EstanteController {
             summary = "Criar nova estante",
             description = "Cria uma nova estante com base nos dados fornecidos no corpo da requisição",
             responses = {
-                    @ApiResponse(
-                            responseCode = "201",
-                            description = "Estante criada com sucesso"
-                    ),
-                    @ApiResponse(
-                            responseCode = "400",
-                            description = "Dados fornecidos são inválidos"
-                    ),
-                    @ApiResponse(
-                            responseCode = "500",
-                            description = "Erro interno do servidor"
-                    )
+                    @ApiResponse(responseCode = "201", description = "Estante criada com sucesso"),
+                    @ApiResponse(responseCode = "400", description = "Dados fornecidos são inválidos"),
+                    @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
             }
     )
-    public ResponseEntity<EstanteResponseDTO> create(@RequestBody EstanteResquestDTO dto) {
+    public ResponseEntity<EntityModel<EstanteResponseDTO>> create(@RequestBody EstanteResquestDTO dto) {
         EstanteResponseDTO novo = estanteService.create(dto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(novo);
+        return ResponseEntity.status(HttpStatus.CREATED).body(assembler.toModel(novo));
     }
-    @PutMapping(value = "/{id}",produces = MediaType.APPLICATION_JSON_VALUE)
+
+    @PutMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(
             summary = "Atualizar estante",
             description = "Atualiza os detalhes de uma estante existente com base no ID fornecido e nos dados fornecidos no corpo da requisição",
             responses = {
-                    @ApiResponse(
-                            responseCode = "200",
-                            description = "Estante atualizada com sucesso"
-                    ),
-                    @ApiResponse(
-                            responseCode = "404",
-                            description = "Estante não encontrada"
-                    ),
-                     @ApiResponse(
-                             responseCode = "400",
-                             description = "Dados fornecidos são inválidos"
-                     ),
-                    @ApiResponse(
-                            responseCode = "500",
-                             description = "Erro interno do servidor"
-                     )
+                    @ApiResponse(responseCode = "200", description = "Estante atualizada com sucesso"),
+                    @ApiResponse(responseCode = "404", description = "Estante não encontrada"),
+                    @ApiResponse(responseCode = "400", description = "Dados fornecidos são inválidos"),
+                    @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
             }
     )
-    public ResponseEntity<EstanteResponseDTO> update(@PathVariable Long id,@RequestBody EstanteResquestDTO dto){
-        return ResponseEntity.ok(estanteService.update(id,dto));
+    public ResponseEntity<EntityModel<EstanteResponseDTO>> update(@PathVariable Long id, @RequestBody EstanteResquestDTO dto) {
+        EstanteResponseDTO atualizado = estanteService.update(id, dto);
+        return ResponseEntity.ok(assembler.toModel(atualizado));
     }
 
     @DeleteMapping(value = "/{id}/leitor/{leitorId}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -143,22 +107,10 @@ public class EstanteController {
             summary = "Excluir estante",
             description = "Exclui uma estante existente com base no ID fornecido e no ID do leitor associado",
             responses = {
-                    @ApiResponse(
-                            responseCode = "204",
-                            description = "Estante excluída com sucesso"
-                    ),
-                    @ApiResponse(
-                            responseCode = "404",
-                            description = "Estante ou leitor não encontrado"
-                    ),
-                    @ApiResponse(
-                            responseCode = "400",
-                            description = "ID fornecido é inválido"
-                    ),
-                     @ApiResponse(
-                             responseCode = "500",
-                             description = "Erro interno do servidor"
-                     )
+                    @ApiResponse(responseCode = "204", description = "Estante excluída com sucesso"),
+                    @ApiResponse(responseCode = "404", description = "Estante ou leitor não encontrado"),
+                    @ApiResponse(responseCode = "400", description = "ID fornecido é inválido"),
+                    @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
             }
     )
     public ResponseEntity<Void> delete(@PathVariable Long id, @PathVariable Long leitorId) {

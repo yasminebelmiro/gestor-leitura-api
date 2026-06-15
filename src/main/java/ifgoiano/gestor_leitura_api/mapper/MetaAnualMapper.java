@@ -11,7 +11,10 @@ import ifgoiano.gestor_leitura_api.model.MetaAnual;
 
 @Mapper(componentModel="spring")
 public interface MetaAnualMapper {
+
+    @Mapping(target="leitorId", source="meta.leitor.id")
     MetaAnualResponseDTO toResponse(MetaAnual meta);
+
     List<MetaAnualResponseDTO> toListResponse(List<MetaAnual> meta);
 
     @Mapping(target="id", ignore=true)

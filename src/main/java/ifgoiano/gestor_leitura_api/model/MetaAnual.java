@@ -52,6 +52,14 @@ public class MetaAnual implements Serializable {
         this.leitor = leitor;
     }
 
+       public void incrementarProgresso() {
+        if (this.quantidadeAlcancada < 0) {
+            this.quantidadeAlcancada = 0; 
+        }
+        
+        this.quantidadeAlcancada++;
+    }
+
     public void atualizarProgresso(int livrosLidos) {
         if (livrosLidos < 0) {
             throw new IllegalArgumentException("A quantidade de livros lidos não pode ser negativa.");

@@ -60,6 +60,7 @@ public class LeitorService {
         Leitor leitor = repository.findByIdOrThrow(id);
         repository.delete(leitor);
     }
+    //TODO: add seervice addEstante
 
     public MetaAnualResponseDTO buscarMetaPorAno(Long id, int ano) {
         logger.info(() -> "Buscando meta por ano de " + ano);

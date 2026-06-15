@@ -12,6 +12,7 @@ public record LivroResponseDTO(
         String dataPublicacao,
         Integer numeroPaginas,
         List<String> generos,
-        String capaUrl) {
+        String capaUrl,
+        String isbn) {
 
 }

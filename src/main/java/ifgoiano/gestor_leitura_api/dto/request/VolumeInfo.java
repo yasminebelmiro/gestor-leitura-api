@@ -13,5 +13,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
     String publishedDate,
     Integer pageCount,
     List<String> categories,
-    ImageLinks imageLinks
+    ImageLinks imageLinks,
+    List<IndustryIdentifier> industryIdentifiers
 ){}

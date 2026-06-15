@@ -53,9 +53,7 @@ public class Livro implements Serializable {
     @Column(nullable = false)
     private String titulo;
 
-    @NotBlank(message = "O ISBN é obrigatório.")
-    @Size(max = 20, message = "O ISBN deve ter no máximo 20 caracteres.")
-    @Column(nullable = false, length = 20)
+    @Column(nullable = true, length = 20)
     private String isbn;
 
     @Min(value = 1, message = "O número de páginas deve ser maior que zero.")

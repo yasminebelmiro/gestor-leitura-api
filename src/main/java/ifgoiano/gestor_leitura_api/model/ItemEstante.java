@@ -109,10 +109,6 @@ public class ItemEstante implements Serializable {
         atualizarStatus(StatusLeitura.LIDO, LocalDate.now());
     }
 
-    public void marcarComoLido(LocalDate dataConclusao) {
-        atualizarStatus(StatusLeitura.LIDO, dataConclusao);
-    }
-
     public void marcarComoQueroLer() {
         atualizarStatus(StatusLeitura.QUERO_LER, LocalDate.now());
     }
@@ -144,19 +140,7 @@ public class ItemEstante implements Serializable {
         sincronizarMetas(statusAnterior, conclusaoAnterior);
     }
 
-    public RegistroLeitura adicionarRegistroLeitura(LocalDate data, int paginaAtual, String comentario) {
-        RegistroLeitura registro = new RegistroLeitura(null, this, data, paginaAtual, comentario);
-        validarNovoRegistro(registro);
-        registros.add(registro);
-
-        if (livro != null && paginaAtual >= livro.getNumeroPaginas()) {
-            atualizarStatus(StatusLeitura.LIDO, data);
-        } else if (status == StatusLeitura.QUERO_LER) {
-            atualizarStatus(StatusLeitura.LENDO, data);
-        }
-
-        return registro;
-    }
+ 
 
     public int calcularDiasDeLeitura() {
         if (registros == null || registros.isEmpty()) {

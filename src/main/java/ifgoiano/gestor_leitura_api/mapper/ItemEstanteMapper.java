@@ -11,11 +11,18 @@ import ifgoiano.gestor_leitura_api.model.ItemEstante;
 
 @Mapper(componentModel = "spring")
 public interface ItemEstanteMapper {
+
+    @Mapping(target = "estanteNome", source = "estante.nome")
+    @Mapping(target = "livroNome", source = "livro.titulo")
     ItemEstanteResponseDTO toResponse(ItemEstante item);
 
     List<ItemEstanteResponseDTO> toResponseList(List<ItemEstante> item);
 
-    @Mapping(target="id", ignore=true)
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "estante", ignore = true)
+    @Mapping(target = "registros", ignore = true)
+    @Mapping(target = "dataConclusao", ignore = true)
+    @Mapping(target = "livro", ignore = true)
     ItemEstante toEntity(ItemEstanteRequestDTO dto);
 
 }

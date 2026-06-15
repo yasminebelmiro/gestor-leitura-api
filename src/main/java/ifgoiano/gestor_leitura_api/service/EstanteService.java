@@ -4,7 +4,8 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import org.springframework.stereotype.Service;
-
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import ifgoiano.gestor_leitura_api.dto.request.EstanteResquestDTO;
 import ifgoiano.gestor_leitura_api.dto.response.EstanteResponseDTO;
 import ifgoiano.gestor_leitura_api.exceptions.EstanteNotFoundException;
@@ -14,6 +15,7 @@ import ifgoiano.gestor_leitura_api.model.Leitor;
 import ifgoiano.gestor_leitura_api.repository.EstanteRepository;
 import ifgoiano.gestor_leitura_api.repository.LeitorRepository;
 import ifgoiano.gestor_leitura_api.repository.LivroRepository;
+
 
 @Service
 public class EstanteService {
@@ -41,12 +43,14 @@ public class EstanteService {
         return mapper.toResponse(estante);
     }
 
+    @Cacheable(value = "estantesPorLeitorId", key = "#leitorId")
     public List<EstanteResponseDTO> findAllByLeitorId(Long leitorId) {
         logger.info(() -> "Buscando estantes de leitor " + leitorId);
         List<Estante> estantes = estanteRepository.findByLeitorId(leitorId);
         return mapper.toResponseList(estantes);
     }
 
+    @CacheEvict(value = "estantesPorLeitor", key = "#dto.leitorId()")
     public EstanteResponseDTO create(EstanteResquestDTO dto) {
         logger.info(() -> "Criando estante" + dto.nome());
 
@@ -58,6 +62,7 @@ public class EstanteService {
         return mapper.toResponse(salva);
     }
 
+    @CacheEvict(value = "estantesPorLeitor", allEntries = true)
     public EstanteResponseDTO update(Long id, EstanteResquestDTO dto) {
         logger.info(() -> "Criando estante " + dto.nome());
         Estante existing = estanteRepository.findByIdAndLeitorId(id, dto.leitorId());
@@ -70,6 +75,7 @@ public class EstanteService {
         return mapper.toResponse(atualizada);
     }
 
+    @CacheEvict(value = "estantesPorLeitor", allEntries = true)
     public void delete(Long id, Long leitorId) {
         logger.info(() -> "Deletando estante " + id);
         Estante existing = estanteRepository.findByIdAndLeitorId(id, leitorId);
