@@ -13,6 +13,7 @@ import ifgoiano.gestor_leitura_api.model.RegistroLeitura;
 public interface RegistroLeituraMapper {
 
     @Mapping(target="livro", source="item.livro.titulo" )
+    @Mapping(target="itemId", source="item.id")
     RegistroLeituraResponseDTO toResponse(RegistroLeitura registro);
     List<RegistroLeituraResponseDTO> tResponseList(List<RegistroLeitura> registros);
 

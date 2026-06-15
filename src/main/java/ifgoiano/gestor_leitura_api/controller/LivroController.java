@@ -2,6 +2,9 @@ package ifgoiano.gestor_leitura_api.controller;
 
 import java.util.List;
 
+import ifgoiano.gestor_leitura_api.assembler.LivroModelAssembler;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -28,10 +31,12 @@ public class LivroController {
 
     private GoogleBooksIntegrationService googleBooksService;
     private final LivroService livroService;
+    private final LivroModelAssembler assembler;
 
-    public LivroController(GoogleBooksIntegrationService googleBooksService, LivroService livroService) {
+    public LivroController(GoogleBooksIntegrationService googleBooksService, LivroService livroService, LivroModelAssembler assembler) {
         this.livroService = livroService;
         this.googleBooksService = googleBooksService;
+        this.assembler = assembler;
     }
 
     @GetMapping("/buscar")
@@ -39,23 +44,14 @@ public class LivroController {
             summary = "Buscar livros",
             description = "Busca livros usando a API do Google Books com base na query fornecida",
             responses = {
-                    @ApiResponse(
-                            responseCode = "200",
-                            description = "Busca realizada com sucesso"
-                    ),
-                    @ApiResponse(
-                            responseCode = "400",
-                            description = "Query de busca inválida"
-                    ),
-                    @ApiResponse(
-                            responseCode = "500",
-                            description = "Erro interno do servidor"
-                    )
+                    @ApiResponse(responseCode = "200", description = "Busca realizada com sucesso"),
+                    @ApiResponse(responseCode = "400", description = "Query de busca inválida"),
+                    @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
             }
     )
-    public ResponseEntity<List<LivroResponseDTO>> buscar(@RequestParam String q) {
+    public ResponseEntity<CollectionModel<EntityModel<LivroResponseDTO>>> buscar(@RequestParam String q) {
         List<LivroResponseDTO> result = googleBooksService.buscarLivros(q);
-        return ResponseEntity.ok(result);
+        return ResponseEntity.ok(assembler.toCollectionModel(result));
     }
 
     @DeleteMapping(value = "/{googleId}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -63,18 +59,9 @@ public class LivroController {
             summary = "Deletar livro",
             description = "Remove um livro da coleção com base no Google ID fornecido",
             responses = {
-                    @ApiResponse(
-                            responseCode = "204",
-                            description = "Livro deletado com sucesso"
-                    ),
-                    @ApiResponse(
-                            responseCode = "404",
-                            description = "Livro não encontrado"
-                    ),
-                    @ApiResponse(
-                            responseCode = "400",
-                            description = "Google ID fornecido é inválido"
-                    )
+                    @ApiResponse(responseCode = "204", description = "Livro deletado com sucesso"),
+                    @ApiResponse(responseCode = "404", description = "Livro não encontrado"),
+                    @ApiResponse(responseCode = "400", description = "Google ID fornecido é inválido")
             }
     )
     public ResponseEntity<Void> delete(@PathVariable String googleId) {
@@ -87,18 +74,9 @@ public class LivroController {
             summary = "Calcular média de avaliações",
             description = "Calcula a média das avaliações para um livro específico com base no Google ID fornecido",
             responses = {
-                    @ApiResponse(
-                            responseCode = "200",
-                            description = "Média calculada com sucesso"
-                    ),
-                    @ApiResponse(
-                            responseCode = "404",
-                            description = "Livro não encontrado"
-                    ),
-                    @ApiResponse(
-                            responseCode = "400",
-                            description = "Google ID fornecido é inválido"
-                    )
+                    @ApiResponse(responseCode = "200", description = "Média calculada com sucesso"),
+                    @ApiResponse(responseCode = "404", description = "Livro não encontrado"),
+                    @ApiResponse(responseCode = "400", description = "Google ID fornecido é inválido")
             }
     )
     public ResponseEntity<Double> calcularMediaAvaliacoes(@PathVariable String googleId) {
@@ -111,18 +89,9 @@ public class LivroController {
             summary = "Exibir ficha técnica completa",
             description = "Exibe a ficha técnica completa de um livro específico com base no Google ID fornecido",
             responses = {
-                    @ApiResponse(
-                            responseCode = "200",
-                            description = "Ficha técnica exibida com sucesso"
-                    ),
-                    @ApiResponse(
-                            responseCode = "404",
-                            description = "Livro não encontrado"
-                    ),
-            @ApiResponse(
-                            responseCode = "400",
-                            description = "Google ID fornecido é inválido"
-                    ),
+                    @ApiResponse(responseCode = "200", description = "Ficha técnica exibida com sucesso"),
+                    @ApiResponse(responseCode = "404", description = "Livro não encontrado"),
+                    @ApiResponse(responseCode = "400", description = "Google ID fornecido é inválido"),
             }
     )
     public ResponseEntity<String> exibirFichaTecnicaCompleta(@PathVariable String googleId) {

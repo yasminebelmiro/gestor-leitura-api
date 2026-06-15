@@ -1,11 +1,14 @@
 package ifgoiano.gestor_leitura_api.controller;
 
+import ifgoiano.gestor_leitura_api.assembler.RegistroLeituraModelAssembler;
 import ifgoiano.gestor_leitura_api.dto.request.RegistroLeituraRequestDTO;
 import ifgoiano.gestor_leitura_api.dto.response.RegistroLeituraResponseDTO;
 import ifgoiano.gestor_leitura_api.service.RegistroLeituraService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -21,9 +24,11 @@ import java.util.List;
 public class RegistroLeituraController {
 
     private RegistroLeituraService registroLeituraService;
+    private final RegistroLeituraModelAssembler assembler;
 
-    public RegistroLeituraController(RegistroLeituraService registroLeituraService) {
+    public RegistroLeituraController(RegistroLeituraService registroLeituraService, RegistroLeituraModelAssembler assembler) {
         this.registroLeituraService = registroLeituraService;
+        this.assembler = assembler;
     }
 
         @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -31,26 +36,15 @@ public class RegistroLeituraController {
                 summary = "Buscar registro de leitura por ID",
                 description = "Retorna os detalhes do registro de leitura com base no ID fornecido",
                 responses = {
-                        @ApiResponse(
-                                responseCode = "200",
-                                description = "Registro de leitura encontrado com sucesso"
-                        ),
-                        @ApiResponse(
-                                responseCode = "404",
-                                description = "Registro de leitura não encontrado"
-                        ),
-                        @ApiResponse(
-                                responseCode = "400",
-                                description = "ID fornecido é inválido"
-                        ),
-                        @ApiResponse(
-                                responseCode = "500",
-                                description = "Erro interno do servidor"
-                        )
+                        @ApiResponse(responseCode = "200", description = "Registro de leitura encontrado com sucesso"),
+                        @ApiResponse(responseCode = "404", description = "Registro de leitura não encontrado"),
+                        @ApiResponse(responseCode = "400", description = "ID fornecido é inválido"),
+                        @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
                 }
         )
-        public ResponseEntity<RegistroLeituraResponseDTO> findById(@PathVariable Long id) {
-            return ResponseEntity.ok(registroLeituraService.findById(id));
+        public ResponseEntity<EntityModel<RegistroLeituraResponseDTO>> findById(@PathVariable Long id) {
+            RegistroLeituraResponseDTO dto = registroLeituraService.findById(id);
+            return ResponseEntity.ok(assembler.toModel(dto));
         }
 
         @GetMapping(value = "/item/{itemId}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -58,54 +52,30 @@ public class RegistroLeituraController {
                 summary = "Listar registros de leitura por item",
                 description = "Retorna uma lista de registros de leitura associados a um item específico, ordenados por data de leitura",
                 responses = {
-                        @ApiResponse(
-                                responseCode = "200",
-                                description = "Registros de leitura encontrados com sucesso"
-                        ),
-                        @ApiResponse(
-                                responseCode = "404",
-                                description = "Nenhum registro de leitura encontrado para o item fornecido"
-                        ),
-                        @ApiResponse(
-                                responseCode = "400",
-                                description = "ID do item fornecido é inválido"
-                        ),
-                        @ApiResponse(
-                                responseCode = "500",
-                                description = "Erro interno do servidor"
-                        )
+                        @ApiResponse(responseCode = "200", description = "Registros de leitura encontrados com sucesso"),
+                        @ApiResponse(responseCode = "404", description = "Nenhum registro de leitura encontrado para o item fornecido"),
+                        @ApiResponse(responseCode = "400", description = "ID do item fornecido é inválido"),
+                        @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
                 }
         )
-        public ResponseEntity<List<RegistroLeituraResponseDTO>> listAllOrdened(@PathVariable Long itemId) {
-            return ResponseEntity.ok(registroLeituraService.listAllOrdened(itemId));
+        public ResponseEntity<CollectionModel<EntityModel<RegistroLeituraResponseDTO>>> listAllOrdened(@PathVariable Long itemId) {
+            List<RegistroLeituraResponseDTO> registros = registroLeituraService.listAllOrdened(itemId);
+            return ResponseEntity.ok(assembler.toCollectionModel(registros));
         }
-
         @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
         @Operation(
                 summary = "Criar um novo registro de leitura",
                 description = "Cria um novo registro de leitura para um item específico, associando-o a um leitor e registrando a data de leitura",
                 responses = {
-                        @ApiResponse(
-                                responseCode = "201",
-                                description = "Registro de leitura criado com sucesso"
-                        ),
-                        @ApiResponse(
-                                responseCode = "400",
-                                description = "Dados fornecidos são inválidos"
-                        ),
-                        @ApiResponse(
-                                responseCode = "404",
-                                description = "Leitor ou item não encontrado para os IDs fornecidos"
-                        ),
-                        @ApiResponse(
-                                responseCode = "500",
-                                description = "Erro interno do servidor"
-                        )
+                        @ApiResponse(responseCode = "201", description = "Registro de leitura criado com sucesso"),
+                        @ApiResponse(responseCode = "400", description = "Dados fornecidos são inválidos"),
+                        @ApiResponse(responseCode = "404", description = "Leitor ou item não encontrado para os IDs fornecidos"),
+                        @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
                 }
         )
-        public ResponseEntity<RegistroLeituraResponseDTO> create(RegistroLeituraRequestDTO dto) {
+        public ResponseEntity<EntityModel<RegistroLeituraResponseDTO>> create(@RequestBody RegistroLeituraRequestDTO dto) { // Adicionado @RequestBody
             RegistroLeituraResponseDTO novo = registroLeituraService.create(dto);
-            return ResponseEntity.status(HttpStatus.CREATED).body(novo);
+            return ResponseEntity.status(HttpStatus.CREATED).body(assembler.toModel(novo));
         }
 
         @PutMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -113,26 +83,15 @@ public class RegistroLeituraController {
                 summary = "Atualizar um registro de leitura",
                 description = "Atualiza os detalhes de um registro de leitura existente com base no ID fornecido e nos dados fornecidos no corpo da requisição",
                 responses = {
-                        @ApiResponse(
-                                responseCode = "200",
-                                description = "Registro de leitura atualizado com sucesso"
-                        ),
-                        @ApiResponse(
-                                responseCode = "404",
-                                description = "Registro de leitura não encontrado para o ID fornecido"
-                        ),
-                        @ApiResponse(
-                                responseCode = "400",
-                                description = "Dados fornecidos são inválidos"
-                        ),
-                        @ApiResponse(
-                                responseCode = "500",
-                                description = "Erro interno do servidor"
-                        )
+                        @ApiResponse(responseCode = "200", description = "Registro de leitura atualizado com sucesso"),
+                        @ApiResponse(responseCode = "404", description = "Registro de leitura não encontrado para o ID fornecido"),
+                        @ApiResponse(responseCode = "400", description = "Dados fornecidos são inválidos"),
+                        @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
                 }
         )
-        public ResponseEntity<RegistroLeituraResponseDTO> update(@PathVariable Long id, RegistroLeituraRequestDTO dto) {
-            return ResponseEntity.ok(registroLeituraService.update(id, dto));
+        public ResponseEntity<EntityModel<RegistroLeituraResponseDTO>> update(@PathVariable Long id, @RequestBody RegistroLeituraRequestDTO dto) { // Adicionado @RequestBody
+            RegistroLeituraResponseDTO atualizado = registroLeituraService.update(id, dto);
+            return ResponseEntity.ok(assembler.toModel(atualizado));
         }
 
         @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -140,54 +99,14 @@ public class RegistroLeituraController {
                 summary = "Excluir um registro de leitura",
                 description = "Exclui um registro de leitura existente com base no ID fornecido",
                 responses = {
-                        @ApiResponse(
-                                responseCode = "204",
-                                description = "Registro de leitura excluído com sucesso"
-                        ),
-                        @ApiResponse(
-                                responseCode = "404",
-                                description = "Registro de leitura não encontrado para o ID fornecido"
-                        ),
-                        @ApiResponse(
-                                responseCode = "400",
-                                description = "ID fornecido é inválido"
-                        ),
-                         @ApiResponse(
-                                responseCode = "500",
-                                description = "Erro interno do servidor"
-                        )
+                        @ApiResponse(responseCode = "204", description = "Registro de leitura excluído com sucesso"),
+                        @ApiResponse(responseCode = "404", description = "Registro de leitura não encontrado para o ID fornecido"),
+                        @ApiResponse(responseCode = "400", description = "ID fornecido é inválido"),
+                        @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
                 }
         )
         public ResponseEntity<Void> delete(@PathVariable Long id) {
             registroLeituraService.delete(id);
             return ResponseEntity.noContent().build();
-        }
-
-        @PutMapping(value = "/{itemId}/{registroId}/progresso", produces = MediaType.APPLICATION_JSON_VALUE)
-        @Operation(
-                summary = "Atualizar progresso de leitura",
-                description = "Atualiza o progresso de leitura de um registro específico, permitindo que o usuário informe a página atual e um comentário sobre o progresso",
-                responses = {
-                        @ApiResponse(
-                                responseCode = "200",
-                                description = "Progresso de leitura atualizado com sucesso"
-                        ),
-                        @ApiResponse(
-                                responseCode = "404",
-                                description = "Registro de leitura ou item não encontrado para os IDs fornecidos"
-                        ),
-                        @ApiResponse(
-                                responseCode = "400",
-                                description = "Dados fornecidos são inválidos"
-                        ),
-                        @ApiResponse(
-                                responseCode = "500",
-                                description = "Erro interno do servidor"
-                        )
-                }
-        )
-        public ResponseEntity<Void> atualizarProgresso(@PathVariable Long itemId, @PathVariable Long registroId, @RequestParam int pagina, @RequestParam String comentario) {
-            registroLeituraService.atualizarProgresso(itemId, registroId, pagina, comentario);
-            return ResponseEntity.ok().build();
         }
 }
