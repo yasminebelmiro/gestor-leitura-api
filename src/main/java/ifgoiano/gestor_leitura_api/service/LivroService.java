@@ -3,6 +3,7 @@ package ifgoiano.gestor_leitura_api.service;
 import java.util.Optional;
 import java.util.logging.Logger;
 
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import ifgoiano.gestor_leitura_api.dto.response.LivroResponseDTO;
@@ -40,12 +41,14 @@ public class LivroService {
         livroRepository.deleteByGoogleVolumeId(googleVolumeId);
     }
 
+    @Cacheable(value="fichaTecnicaLivro", key="#googleVolumeId")
     public Double calcularMediaAvaliacoes(String googleVolumeId) {
         return livroRepository.findByGoogleVolumeId(googleVolumeId)
                 .map(Livro::calcularMediaAvaliacoes)
                 .orElseThrow(() -> new LivroNotFoundException(googleVolumeId));
     }
 
+    @Cacheable(value="fichaTecnicaLivro", key="#googleVolumeId")
     public String exibirFichaTecnicaCompleta(String googleVolumeId) {
         return livroRepository.findByGoogleVolumeId(googleVolumeId).map(Livro::exibirFichaTecnicaCompleta)
                 .orElseThrow(() -> new LivroNotFoundException(googleVolumeId));

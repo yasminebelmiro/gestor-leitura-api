@@ -11,6 +11,7 @@ import ifgoiano.gestor_leitura_api.model.Estante;
 
 @Mapper(componentModel = "spring")
 public interface EstanteMapper {
+    @Mapping(target="leitorId", source="leitor.id")
     @Mapping(target = "leitorNickName", source = "leitor.nickName")
     EstanteResponseDTO toResponse(Estante estante);
 

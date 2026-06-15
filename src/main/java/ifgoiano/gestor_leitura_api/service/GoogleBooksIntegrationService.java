@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
@@ -36,6 +37,7 @@ public class GoogleBooksIntegrationService {
         RestClientException.class}, maxAttempts = 3, backoff = @Backoff(delay = 2000) // Espera 2 segundos antes de
     // tentar de novo
     )
+    @Cacheable(value="buscarGoogleBooks", key="#termoBusca")
     public List<LivroResponseDTO> buscarLivros(String termoBusca) {
         String url = UriComponentsBuilder.fromUriString(apiUrl)
                 .queryParam("q", termoBusca)
@@ -97,6 +99,7 @@ public class GoogleBooksIntegrationService {
         }
     }
 
+    @Cacheable(value="detalhesGoogleBook", key="#googleId")
     public GoogleBookItem buscarDetalhesCompletos(String googleId) {
         String url = UriComponentsBuilder.fromUriString(apiUrl)
                 .pathSegment(googleId)

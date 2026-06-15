@@ -3,6 +3,8 @@ package ifgoiano.gestor_leitura_api.service;
 import java.util.List;
 import java.util.logging.Logger;
 
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 
 import ifgoiano.gestor_leitura_api.dto.request.ResenhaRequestDTO;
@@ -44,6 +46,10 @@ public class ResenhaService {
         return mapper.toListResponse(resenhas);
     }
 
+    @Caching(evict= {
+        @CacheEvict(value="mediaAvaliacoesLivro", key="#dto.googleVolumeId()"),
+        @CacheEvict(value="fichaTecnicaLivro", key="dto.googleVolumeId()")
+    })
     public ResenhaResponseDTO create(ResenhaRequestDTO dto) {
         logger.info(() -> "Criando resenha do livro" + dto.googleVolumeId());
 
@@ -63,6 +69,7 @@ public class ResenhaService {
         return mapper.toResponse(salvo);
     }
 
+    @CacheEvict(value = {"mediaAvaliacoesLivro", "fichaTecnicaLivro"}, allEntries = true)
     public ResenhaResponseDTO update(Long id, ResenhaRequestDTO dto) {
         logger.info(() -> "Atualizando resenha do livro" + dto.googleVolumeId());
         repository.findByIdOrThrow(id);
@@ -72,6 +79,7 @@ public class ResenhaService {
         return mapper.toResponse(atualizada);
     }
 
+    @CacheEvict(value = {"mediaAvaliacoesLivro", "fichaTecnicaLivro"}, allEntries = true)
     public void delete(Long id) {
         logger.info(() -> "Delete resenha " + id);
         Resenha existing = repository.findByIdOrThrow(id);
