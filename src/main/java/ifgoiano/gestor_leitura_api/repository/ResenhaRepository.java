@@ -8,10 +8,16 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import ifgoiano.gestor_leitura_api.exceptions.RegistroLeitutraNotfoundException;
+import ifgoiano.gestor_leitura_api.exceptions.ResenhaNotFoundException;
+import ifgoiano.gestor_leitura_api.model.RegistroLeitura;
 import ifgoiano.gestor_leitura_api.model.Resenha;
 
 @Repository
 public interface ResenhaRepository extends JpaRepository<Resenha, Long> {
+    default Resenha findByIdOrThrow(Long id) {
+        return findById(id).orElseThrow(() -> new ResenhaNotFoundException(id));
+    }
 
     // Lista resenhas feitas por um leitor.
     List<Resenha> findByLeitorId(Long leitorId);

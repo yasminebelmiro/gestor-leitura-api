@@ -1,60 +1,61 @@
 package ifgoiano.gestor_leitura_api.repository;
 
-import ifgoiano.gestor_leitura_api.model.Livro;
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import ifgoiano.gestor_leitura_api.model.Livro;
 
 @Repository
 public interface LivroRepository extends JpaRepository<Livro, Long> {
 
-//    // Busca livro pelo ISBN.
-//    Optional<Livro> findByIsbn(String isbn);
-//
-//    // Verifica se já existe livro com esse ISBN.
-//    boolean existsByIsbn(String isbn);
-//
-//    // Busca livros que contenham parte do título informado.
-//    List<Livro> findByTituloContainingIgnoreCase(String titulo);
-//
-//    // Busca livros por editora.
-//    List<Livro> findByEditoraId(Long editoraId);
-//
+   // Busca livro pelo ISBN.
+   Optional<Livro> findByIsbn(String isbn);
+
+   // Verifica se já existe livro com esse ISBN.
+   boolean existsByIsbn(String isbn);
+
+   // Busca livros que contenham parte do título informado.
+   List<Livro> findByTituloContainingIgnoreCase(String titulo);
+
+   // Busca livros por editora.
+   List<Livro> findByEditoraId(Long editoraId);
+
 //    // Busca livros publicados dentro de um intervalo de datas.
 //    List<Livro> findByDataPublicacaoBetween(Date dataInicio, Date dataFim);
-//
+
 //    // Lista os livros publicados em determinado ano.
 //    @Query("SELECT l FROM Livro l WHERE YEAR(l.dataPublicacao) = :ano")
 //    List<Livro> findLancamentosDoAno(@Param("ano") int ano);
-//
-//    // Lista livros de um determinado autor.
-//    @Query("SELECT l FROM Livro l JOIN l.autores a WHERE a.id = :autorId")
-//    List<Livro> findLivrosByAutorId(@Param("autorId") Long autorId);
-//
-//    // Lista livros de um determinado gênero.
-//    @Query("SELECT l FROM Livro l JOIN l.generos g WHERE g.id = :generoId")
-//    List<Livro> findLivrosByGeneroId(@Param("generoId") Long generoId);
-//
-//    // Busca livro pelo id do GoogleVolume.
-//    Optional<Livro> findByGoogleVolumeId(String googleVolumeId);
-//
-//    // Verifica a existencia do GoogleVolumeId.
-//    boolean existsByGoogleVolumeId(String googleVolumeId);
-//
-//    // Busca pelo id de autor.
-//    List<Livro> findByAutores_Id(Long autorId);
-//
-//    // Busca pelo id do genero.
-//    List<Livro> findByGeneros_Id(Long generoId);
-//
-//    // Busca livros com um numero de paginas maior ou igual.
-//    List<Livro> findByNumeroPaginasGreaterThanEqual(int numeroPaginas);
-//
+
+   // Lista livros de um determinado autor.
+   @Query("SELECT l FROM Livro l JOIN l.autores a WHERE a.id = :autorId")
+   List<Livro> findLivrosByAutorId(@Param("autorId") Long autorId);
+
+   // Lista livros de um determinado gênero.
+   @Query("SELECT l FROM Livro l JOIN l.generos g WHERE g.id = :generoId")
+   List<Livro> findLivrosByGeneroId(@Param("generoId") Long generoId);
+
+   // Busca livro pelo id do GoogleVolume.
+   Optional<Livro> findByGoogleVolumeId(String googleVolumeId);
+
+   Optional<Livro> deleteByGoogleVolumeId(String googleVolumeId);
+   // Verifica a existencia do GoogleVolumeId.
+   boolean existsByGoogleVolumeId(String googleVolumeId);
+
+   // Busca pelo id de autor.
+   List<Livro> findByAutores_Id(Long autorId);
+
+   // Busca pelo id do genero.
+   List<Livro> findByGeneros_Id(Long generoId);
+
+   // Busca livros com um numero de paginas maior ou igual.
+   List<Livro> findByNumeroPaginasGreaterThanEqual(int numeroPaginas);
+
 //    // Busca livros lançados em um dado periodo.
 //    @Query("""
 //            SELECT l FROM Livro l
@@ -65,17 +66,17 @@ public interface LivroRepository extends JpaRepository<Livro, Long> {
 //            @Param("inicio") Date inicio,
 //            @Param("fim") Date fim
 //    );
-//
-//    // Busca um autor relacionado a uma editora.
-//    @Query("""
-//            SELECT l FROM Livro l
-//            JOIN l.autores a
-//            WHERE a.id = :autorId
-//              AND l.editora.id = :editoraId
-//            """)
-//    List<Livro> findByAutorIdAndEditoraId(
-//            @Param("autorId") Long autorId,
-//            @Param("editoraId") Long editoraId
-//    );
+
+   // Busca um autor relacionado a uma editora.
+   @Query("""
+           SELECT l FROM Livro l
+           JOIN l.autores a
+           WHERE a.id = :autorId
+             AND l.editora.id = :editoraId
+           """)
+   List<Livro> findByAutorIdAndEditoraId(
+           @Param("autorId") Long autorId,
+           @Param("editoraId") Long editoraId
+   );
 
 }

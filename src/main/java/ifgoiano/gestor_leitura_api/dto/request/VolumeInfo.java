@@ -1,6 +1,5 @@
-package ifgoiano.gestor_leitura_api.dto;
+package ifgoiano.gestor_leitura_api.dto.request;
 
-import java.util.Date;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -11,8 +10,9 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
     List<String> authors,
     String description,
     String publisher,
-    Date publishedDate,
-    int pageCount,
+    String publishedDate,
+    Integer pageCount,
     List<String> categories,
-    ImageLinks imageLinks
+    ImageLinks imageLinks,
+    List<IndustryIdentifier> industryIdentifiers
 ){}

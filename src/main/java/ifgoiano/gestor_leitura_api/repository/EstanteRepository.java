@@ -17,7 +17,7 @@ public interface EstanteRepository extends JpaRepository<Estante, Long> {
     List<Estante> findByLeitorId(Long leitorId);
 
     // Busca uma estante específica de um leitor.
-    Optional<Estante> findByIdAndLeitorId(Long id, Long leitorId);
+    Estante findByIdAndLeitorId(Long id, Long leitorId);
 
     // Busca estantes de um leitor pelo nome.
     List<Estante> findByLeitorIdAndNomeContainingIgnoreCase(Long leitorId, String nome);
