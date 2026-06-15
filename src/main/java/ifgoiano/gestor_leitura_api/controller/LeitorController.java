@@ -1,5 +1,19 @@
 package ifgoiano.gestor_leitura_api.controller;
 
+import org.springframework.hateoas.EntityModel;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import ifgoiano.gestor_leitura_api.assembler.LeitorModelAssembler;
 import ifgoiano.gestor_leitura_api.dto.request.LeitorRequestDTO;
 import ifgoiano.gestor_leitura_api.dto.response.LeitorResponseDTO;
@@ -10,12 +24,6 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.hateoas.EntityModel;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/leitor")
@@ -31,32 +39,7 @@ public class LeitorController {
         this.assembler = assembler;
     }
 
-    //     @GetMapping(value = "/email/{email}", produces = MediaType.APPLICATION_JSON_VALUE)
-//     @Operation(
-//             summary = "Buscar leitor por email",
-//             description = "Retorna os detalhes do leitor com base no email fornecido",
-//             responses = {
-//                     @ApiResponse(
-//                             responseCode = "200",
-//                             description = "Leitor encontrado com sucesso"
-//                     ),
-//                     @ApiResponse(
-//                             responseCode = "404",
-//                             description = "Leitor não encontrado"
-//                     ),
-//                     @ApiResponse(
-//                             responseCode = "400",
-//                             description = "Email fornecido é inválido"
-//                     ),
-//                     @ApiResponse(
-//                             responseCode = "500",
-//                             description = "Erro interno do servidor"
-//                     )
-//             }
-//     )
-//     public ResponseEntity<LeitorResponseDTO> findByEmail(@PathVariable String email) {
-//         return ResponseEntity.ok(leitorService.findByEmail(email));
-//     }
+
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(
             summary = "Buscar leitor por ID",
@@ -218,27 +201,5 @@ public class LeitorController {
         return ResponseEntity.ok(leitorService.contarLivrosLidosNoAno(id, ano));
     }
 
-    @GetMapping(value = "/{id}/meta/{ano}/recalcular", produces = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(
-            summary = "Recalcular meta anual do ano",
-            description = "Recalcula a meta anual do leitor para o ano especificado com base nos livros lidos e progresso atual",
-            responses = {
-                    @ApiResponse(
-                            responseCode = "204",
-                            description = "Meta anual recalculada com sucesso"
-                    ),
-                    @ApiResponse(
-                            responseCode = "404",
-                            description = "Leitor ou meta anual não encontrado"
-                    ),
-                    @ApiResponse(
-                            responseCode = "400",
-                            description = "ID ou ano fornecido é inválido"
-                    )
-            }
-    )
-    public ResponseEntity<Void> recalcularMetaDoAno(@PathVariable Long id, @PathVariable int ano) {
-        leitorService.recalcularMetaDoAno(id, ano);
-        return ResponseEntity.noContent().build();
-    }
+
 }

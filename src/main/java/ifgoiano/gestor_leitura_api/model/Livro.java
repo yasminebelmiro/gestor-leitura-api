@@ -23,7 +23,6 @@ import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.Size;
 
 @Entity
@@ -84,7 +83,6 @@ public class Livro implements Serializable {
     private Editora editora;
 
     @NotNull(message = "A data de publicação é obrigatória.")
-    @PastOrPresent(message = "A data de publicação não pode estar no futuro.")
     @Column(name = "data_publicacao", nullable = false)
     private String dataPublicacao;
 

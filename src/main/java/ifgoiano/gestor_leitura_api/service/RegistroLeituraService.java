@@ -78,6 +78,7 @@ public class RegistroLeituraService {
         repository.findByIdOrThrow(id);
         RegistroLeitura atualizar = mapper.toEntity(dto);
         atualizar.setId(id);
+        atualizar.setData(LocalDate.now());
         RegistroLeitura atualizado = repository.save(atualizar);
         return mapper.toResponse(atualizado);
 

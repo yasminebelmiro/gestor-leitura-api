@@ -14,6 +14,7 @@ public interface ItemEstanteMapper {
 
     @Mapping(target = "estanteNome", source = "estante.nome")
     @Mapping(target = "livroNome", source = "livro.titulo")
+    @Mapping(target="googleVolumeId", source="livro.googleVolumeId")
     ItemEstanteResponseDTO toResponse(ItemEstante item);
 
     List<ItemEstanteResponseDTO> toResponseList(List<ItemEstante> item);
