@@ -27,7 +27,7 @@ public class RegistroLeituraService {
     private final ItemEstanteRepository itemRepository;
 
     public RegistroLeituraService(RegistroLeituraMapper mapper, RegistroLeituraRepository repository,
-            ItemEstanteRepository itemRepository, MetaAtualService metaAtualService) {
+                                  ItemEstanteRepository itemRepository, MetaAtualService metaAtualService) {
         this.mapper = mapper;
         this.repository = repository;
         this.itemRepository = itemRepository;
@@ -59,7 +59,9 @@ public class RegistroLeituraService {
         if (novo.getPaginaAtual() >= item.getLivro().getNumeroPaginas()) {
             item.setStatus(StatusLeitura.LIDO);
             item.setDataConclusao(LocalDate.now());
-            metaAtualService.incrementarProgresso(LocalDate.now().getYear());
+            if (item.getEstante().getLeitor().getMetas().equals(LocalDate.now().getYear())) {
+                metaAtualService.incrementarProgresso(LocalDate.now().getYear());
+            }
             itemRepository.save(item);
         } else if (item.getStatus() == StatusLeitura.QUERO_LER) {
             item.setStatus(StatusLeitura.LENDO);
